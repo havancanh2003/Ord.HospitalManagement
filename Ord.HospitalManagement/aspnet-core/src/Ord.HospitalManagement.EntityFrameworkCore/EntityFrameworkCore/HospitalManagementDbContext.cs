@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ord.HospitalManagement.Entities.Address;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -47,6 +49,10 @@ public class HospitalManagementDbContext :
     public DbSet<IdentityLinkUser> LinkUsers { get; set; }
     public DbSet<IdentityUserDelegation> UserDelegations { get; set; }
     public DbSet<IdentitySession> Sessions { get; set; }
+    // Entity create 
+    public DbSet<Province> Provinces { get; set; }
+    public DbSet<District> Districts { get;set; }
+    public DbSet<Ward> Wards { get; set; }
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
@@ -76,11 +82,32 @@ public class HospitalManagementDbContext :
 
         /* Configure your own tables/entities inside here */
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(HospitalManagementConsts.DbTablePrefix + "YourEntities", HospitalManagementConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        builder.Entity<Province>(b =>
+        {
+            b.ToTable("Province");
+            b.ConfigureByConvention();
+            b.Property(x => x.Code).IsRequired().HasMaxLength(128);
+            b.HasIndex(x => x.Code).IsUnique();
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+        });
+        builder.Entity<District>(b =>
+        {
+            b.ToTable("District");
+            b.ConfigureByConvention();
+            b.Property(x => x.Code).IsRequired().HasMaxLength(128);
+            b.HasIndex(x => x.Code).IsUnique();
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            b.Property(x => x.ProvinceCode).IsRequired();
+        });
+        builder.Entity<Ward>(b =>
+        {
+            b.ToTable("Ward");
+            b.ConfigureByConvention();
+            b.Property(x => x.Code).IsRequired().HasMaxLength(128);
+            b.HasIndex(x => x.Code).IsUnique();
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            b.Property(x => x.ProvinceCode).IsRequired();
+            b.Property(x => x.DistrictCode).IsRequired();
+        });
     }
 }

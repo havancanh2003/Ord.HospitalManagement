@@ -21,6 +21,7 @@ import { APP_ROUTE_PROVIDER } from './route.provider';
 import { ThemeLeptonXModule } from '@abp/ng.theme.lepton-x';
 import { SideMenuLayoutModule } from '@abp/ng.theme.lepton-x/layouts';
 import { AccountLayoutModule } from '@abp/ng.theme.lepton-x/account';
+import { ManageAddressModule } from './manage-address/manage-address.module';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { AccountLayoutModule } from '@abp/ng.theme.lepton-x/account';
                    ThemeLeptonXModule.forRoot(),
                    SideMenuLayoutModule.forRoot(),
                    AccountLayoutModule.forRoot(),
+                   ManageAddressModule,
   ],
   declarations: [AppComponent],
   providers: [

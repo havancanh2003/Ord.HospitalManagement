@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Ord.HospitalManagement.DTOs.Address;
+using Ord.HospitalManagement.Entities.Address;
 
 namespace Ord.HospitalManagement;
 
@@ -6,8 +8,10 @@ public class HospitalManagementApplicationAutoMapperProfile : Profile
 {
     public HospitalManagementApplicationAutoMapperProfile()
     {
-        /* You can configure your AutoMapper mapping configuration here.
-         * Alternatively, you can split your mapping configurations
-         * into multiple profile classes for a better organization. */
+        /* configure AutoMapper mapping. */
+        CreateMap<Province, ProvinceDto>();
+        CreateMap<CreateUpdateProvinceDto, Province>();
+        CreateMap<District, DistrictDto>();
+        CreateMap<Ward, WardDto>();
     }
 }

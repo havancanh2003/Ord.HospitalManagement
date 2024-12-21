@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Domain.Entities;
+﻿using Ord.HospitalManagement.Enums;
+using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Ord.HospitalManagement.Entities.Address
 {
-    public class Province : Entity<int>
+    public class Province : AuditedAggregateRoot<int>
     {
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;
+        public LevelProvince LevelProvince { get; set; } = LevelProvince.Province;
     }
 }
