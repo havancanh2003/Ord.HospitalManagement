@@ -2,21 +2,21 @@ import { RestService, Rest } from '@abp/ng.core';
 import type { PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 import type { DataResult } from '../data-result/models';
-import type { CustomePagedAndSortedResultRequestProvinceDto } from '../dtos/address/model-filter/models';
-import type { CreateUpdateProvinceDto, ProvinceDto } from '../dtos/address/models';
+import type { CustomePagedAndSortedResultRequestDistrictDto } from '../dtos/address/model-filter/models';
+import type { CreateUpdateDistrictDto, DistrictDto } from '../dtos/address/models';
 // import type { IFormFile } from '../microsoft/asp-net-core/http/models';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProvinceService {
+export class DistrictService {
   apiName = 'Default';
 
-  create = (input: CreateUpdateProvinceDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, ProvinceDto>(
+  create = (input: CreateUpdateDistrictDto, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, DistrictDto>(
       {
         method: 'POST',
-        url: '/api/app/province',
+        url: '/api/app/district',
         body: input,
       },
       { apiName: this.apiName, ...config }
@@ -26,35 +26,37 @@ export class ProvinceService {
     this.restService.request<any, void>(
       {
         method: 'DELETE',
-        url: `/api/app/province/${id}`,
+        url: `/api/app/district/${id}`,
       },
       { apiName: this.apiName, ...config }
     );
 
   get = (id: number, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, ProvinceDto>(
+    this.restService.request<any, DistrictDto>(
       {
         method: 'GET',
-        url: `/api/app/province/${id}`,
+        url: `/api/app/district/${id}`,
       },
       { apiName: this.apiName, ...config }
     );
 
-  getAllProvinceCode = (config?: Partial<Rest.Config>) =>
-    this.restService.request<any, string[]>(
+  getDistrictByCodeByCode = (code: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, DistrictDto>(
       {
         method: 'GET',
-        url: '/api/app/province/province-code',
+        url: '/api/app/district/district-by-code',
+        params: { code },
       },
       { apiName: this.apiName, ...config }
     );
 
-  getList = (input: CustomePagedAndSortedResultRequestProvinceDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, PagedResultDto<ProvinceDto>>(
+  getList = (input: CustomePagedAndSortedResultRequestDistrictDto, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, PagedResultDto<DistrictDto>>(
       {
         method: 'GET',
-        url: '/api/app/province',
+        url: '/api/app/district',
         params: {
+          provinceCode: input.provinceCode,
           filterName: input.filterName,
           sorting: input.sorting,
           skipCount: input.skipCount,
@@ -64,31 +66,21 @@ export class ProvinceService {
       { apiName: this.apiName, ...config }
     );
 
-  getProvinceByCodeByCode = (code: string, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, ProvinceDto>(
-      {
-        method: 'GET',
-        url: '/api/app/province/province-by-code',
-        params: { code },
-      },
-      { apiName: this.apiName, ...config }
-    );
-
   importExcelByFormFile = (formFile: FormData, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, DataResult<ProvinceDto>>(
+    this.restService.request<any, DataResult<DistrictDto>>(
       {
         method: 'POST',
-        url: '/api/app/province/import-excel',
+        url: '/api/app/district/import-excel',
         body: formFile,
       },
       { apiName: this.apiName, ...config }
     );
 
-  update = (id: number, input: CreateUpdateProvinceDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, ProvinceDto>(
+  update = (id: number, input: CreateUpdateDistrictDto, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, DistrictDto>(
       {
         method: 'PUT',
-        url: `/api/app/province/${id}`,
+        url: `/api/app/district/${id}`,
         body: input,
       },
       { apiName: this.apiName, ...config }

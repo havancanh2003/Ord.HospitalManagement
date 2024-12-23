@@ -1,4 +1,6 @@
+import * as DataResult from './data-result';
 import * as Dtos from './dtos';
 import * as Enums from './enums';
+import * as Microsoft from './microsoft';
 import * as Services from './services';
-export { Dtos, Enums, Services };
+export { DataResult, Dtos, Enums, Microsoft, Services };

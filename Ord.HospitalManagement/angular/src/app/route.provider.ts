@@ -28,6 +28,18 @@ function configureRoutes(routesService: RoutesService) {
         parentName: '::Menu:Address',
         layout: eLayoutType.application,
       },
+      {
+        path: '/address/district',
+        name: '::Menu:District',
+        parentName: '::Menu:Address',
+        layout: eLayoutType.application,
+      },
+      {
+        path: '/address/ward',
+        name: '::Menu:Ward',
+        parentName: '::Menu:Address',
+        layout: eLayoutType.application,
+      },
     ]);
   };
 }

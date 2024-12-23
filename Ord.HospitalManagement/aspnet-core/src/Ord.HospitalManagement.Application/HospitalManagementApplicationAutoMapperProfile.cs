@@ -9,9 +9,13 @@ public class HospitalManagementApplicationAutoMapperProfile : Profile
     public HospitalManagementApplicationAutoMapperProfile()
     {
         /* configure AutoMapper mapping. */
-        CreateMap<Province, ProvinceDto>();
+        CreateMap<Province, ProvinceDto>().ReverseMap();
         CreateMap<CreateUpdateProvinceDto, Province>();
-        CreateMap<District, DistrictDto>();
-        CreateMap<Ward, WardDto>();
+
+        CreateMap<CreateUpdateDistrictDto, District>();
+        CreateMap<District, DistrictDto>().ReverseMap();
+
+        CreateMap<CreateUpdateWardDto, Ward>();
+        CreateMap<Ward, WardDto>().ReverseMap();
     }
 }

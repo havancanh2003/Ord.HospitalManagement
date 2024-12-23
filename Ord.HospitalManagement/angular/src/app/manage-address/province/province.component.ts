@@ -16,10 +16,12 @@ import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
 export class ProvinceComponent implements OnInit {
   province = { items: [], totalCount: 0 } as PagedResultDto<ProvinceDto>;
   isModalOpen = false;
+  isModalUploadFileOpen!: boolean;
   levelProvinces = levelProvinceOptions;
   form: FormGroup;
   selectedProvince = {} as ProvinceDto;
   proviceSearchName!: string;
+  selectedFile: File | null = null;
 
   constructor(
     public readonly list: ListService,
@@ -81,8 +83,24 @@ export class ProvinceComponent implements OnInit {
       }
     });
   }
-  // onPage(event) {
-  //   console.log(event);
-  //   //this.getPages.skipCount = event.offset;
-  // }
+
+  onFileChange(files: FileList) {
+    if (files) {
+      this.selectedFile = files.item(0);
+    } else {
+      alert('Please select a valid Excel file!');
+    }
+  }
+  uploadFile() {
+    if (!this.selectedFile) {
+      return;
+    }
+    const formData: FormData = new FormData();
+    formData.append('formFile', this.selectedFile, this.selectedFile.name);
+    this.provinceService.importExcelByFormFile(formData).subscribe(response => {
+      console.log(response);
+      this.isModalUploadFileOpen = false;
+      this.list.get();
+    });
+  }
 }

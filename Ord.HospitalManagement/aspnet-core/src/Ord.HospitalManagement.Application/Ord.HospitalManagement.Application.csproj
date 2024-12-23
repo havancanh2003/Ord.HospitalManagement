@@ -9,22 +9,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ord.HospitalManagement.Domain\Ord.HospitalManagement.Domain.csproj" />
-    <ProjectReference Include="..\Ord.HospitalManagement.Application.Contracts\Ord.HospitalManagement.Application.Contracts.csproj" />
+    <Compile Remove="Services\Excel\**" />
+    <EmbeddedResource Remove="Services\Excel\**" />
+    <None Remove="Services\Excel\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ord.HospitalManagement.Domain\Ord.HospitalManagement.Domain.csproj" />
+    <ProjectReference Include="..\Ord.HospitalManagement.Application.Contracts\Ord.HospitalManagement.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Ord.HospitalManagement.EntityFrameworkCore\Ord.HospitalManagement.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="EPPlus" Version="7.5.2" />
     <PackageReference Include="Volo.Abp.Account.Application" Version="8.3.0" />
+    <PackageReference Include="Volo.Abp.Dapper" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.Identity.Application" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.PermissionManagement.Application" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.FeatureManagement.Application" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="8.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\Excel\" />
   </ItemGroup>
 
 </Project>
