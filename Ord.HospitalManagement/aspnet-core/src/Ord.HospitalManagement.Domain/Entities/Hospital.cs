@@ -8,7 +8,6 @@ namespace Ord.HospitalManagement.Entities
         public string HospitalName { get; set; } = null!;
         public string Hotline { get; set; } = null!;
         public string Code { get; set; } = null!;
-        public Guid UserHospitalId { get; set; }
         public string ProvinceCode { get; set; } = null!;
         public string DistrictCode { get; set; } = null!;
         public string WardCode { get; set; } = null!;

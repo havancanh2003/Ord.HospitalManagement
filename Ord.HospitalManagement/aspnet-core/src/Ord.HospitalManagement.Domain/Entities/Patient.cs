@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace Ord.HospitalManagement.Entities.Address
+namespace Ord.HospitalManagement.Entities
 {
     public class Patient : AuditedAggregateRoot<int>
     {

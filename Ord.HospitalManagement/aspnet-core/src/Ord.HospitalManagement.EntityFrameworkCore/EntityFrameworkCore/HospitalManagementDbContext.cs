@@ -56,6 +56,8 @@ public class HospitalManagementDbContext :
     public DbSet<Ward> Wards { get; set; }
     public DbSet<Hospital> Hospitals { get; set; }
     public DbSet<Patient> Patients { get; set; }
+    public DbSet<UserHospital> UserHospitals { get; set; }
+
 
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
@@ -134,7 +136,13 @@ public class HospitalManagementDbContext :
             b.HasIndex(x => x.Code).IsUnique();
             b.Property(x => x.DistrictCode).IsRequired();
             b.Property(x => x.WardCode).IsRequired();
-            b.Property(x => x.UserHospitalId).IsUnicode();
+        });
+        builder.Entity<UserHospital>(b =>
+        {
+            b.ToTable("UserHospital");
+            b.ConfigureByConvention();
+            b.Property(x => x.HospitalId).IsUnicode();
+            b.Property(x => x.UserId).IsUnicode();
         });
     }
 }

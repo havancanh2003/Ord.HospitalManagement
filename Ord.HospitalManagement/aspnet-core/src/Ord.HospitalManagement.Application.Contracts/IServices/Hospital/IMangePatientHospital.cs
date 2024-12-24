@@ -9,9 +9,9 @@ using Volo.Abp.Application.Services;
 
 namespace Ord.HospitalManagement.IServices.Hospital
 {
-    public interface IMangeHospitals : IApplicationService
+    public interface IMangePatientHospital : IApplicationService
     {
-        //Task<PagedResultDto<PatientDto>> GetAllPatient();
-        //Task CreatePatiendAsync();
+        Task<PagedResultDto<PatientDto>> GetAllPatient();
+        Task<PatientDto> CreatePatiendAsync(CreateUpdatePatientDto input);
     }
 }
