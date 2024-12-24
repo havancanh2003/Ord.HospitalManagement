@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ord.HospitalManagement.Entities;
 using Ord.HospitalManagement.Entities.Address;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -53,6 +54,9 @@ public class HospitalManagementDbContext :
     public DbSet<Province> Provinces { get; set; }
     public DbSet<District> Districts { get;set; }
     public DbSet<Ward> Wards { get; set; }
+    public DbSet<Hospital> Hospitals { get; set; }
+    public DbSet<Patient> Patients { get; set; }
+
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
@@ -108,6 +112,29 @@ public class HospitalManagementDbContext :
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
             b.Property(x => x.ProvinceCode).IsRequired();
             b.Property(x => x.DistrictCode).IsRequired();
+        });
+
+        builder.Entity<Patient>(b =>
+        {
+            b.ToTable("Patient");
+            b.ConfigureByConvention();
+            b.Property(x => x.Fullname).IsRequired().HasMaxLength(128);
+            b.Property(x => x.HospitalId).IsRequired();
+            b.HasIndex(x => x.Code).IsUnique();
+            b.Property(x => x.ProvinceCode).IsRequired();
+            b.Property(x => x.DistrictCode).IsRequired();
+            b.Property(x => x.WardCode).IsRequired();
+        });
+        builder.Entity<Hospital>(b =>
+        {
+            b.ToTable("Hospital");
+            b.ConfigureByConvention();
+            b.Property(x => x.HospitalName).IsRequired().HasMaxLength(128);
+            b.Property(x => x.ProvinceCode).IsRequired();
+            b.HasIndex(x => x.Code).IsUnique();
+            b.Property(x => x.DistrictCode).IsRequired();
+            b.Property(x => x.WardCode).IsRequired();
+            b.Property(x => x.UserHospitalId).IsUnicode();
         });
     }
 }

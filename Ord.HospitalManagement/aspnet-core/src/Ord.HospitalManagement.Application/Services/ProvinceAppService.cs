@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
-using Ord.HospitalManagement.DapperRepo;
 using Ord.HospitalManagement.DataResult;
 using Ord.HospitalManagement.DomainServices;
 using Ord.HospitalManagement.DTOs.Address;
@@ -16,6 +15,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Users;
 
 namespace Ord.HospitalManagement.Services
 {
@@ -25,17 +25,19 @@ namespace Ord.HospitalManagement.Services
     {
         private readonly IGenerateCode _generateCode;
         private readonly DapperRepo.DapperRepo _dapper;
+        private readonly ICurrentUser _currentUser;
 
-        public ProvinceAppService(IRepository<Province, int> repository, DapperRepo.DapperRepo dapper, IGenerateCode generateCode) : base(repository)
+        public ProvinceAppService(IRepository<Province, int> repository, DapperRepo.DapperRepo dapper, IGenerateCode generateCode, ICurrentUser currentUser) : base(repository)
         {
             _generateCode = generateCode;
             _dapper = dapper;
+            _currentUser = currentUser;
         }
 
         public async override Task<PagedResultDto<ProvinceDto>> GetListAsync(CustomePagedAndSortedResultRequestProvinceDto input)
         {
+            var a = _currentUser.Id;
             var queryable = await Repository.GetQueryableAsync();
-
             var provinces = await AsyncExecuter.ToListAsync(
                 queryable
                     .WhereIf(!input.FilterName.IsNullOrEmpty(), x => x.Name.Contains(input.FilterName)) // apply filtering

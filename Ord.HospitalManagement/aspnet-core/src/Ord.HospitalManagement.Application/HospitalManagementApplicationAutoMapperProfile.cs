@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Ord.HospitalManagement.DTOs.Address;
+using Ord.HospitalManagement.DTOs.Hospital;
+using Ord.HospitalManagement.Entities;
 using Ord.HospitalManagement.Entities.Address;
 
 namespace Ord.HospitalManagement;
@@ -17,5 +19,11 @@ public class HospitalManagementApplicationAutoMapperProfile : Profile
 
         CreateMap<CreateUpdateWardDto, Ward>();
         CreateMap<Ward, WardDto>().ReverseMap();
+
+        CreateMap<CreateUpdateHospitalDto, Hospital>();
+        CreateMap<Hospital, HospitalDto>().ReverseMap();
+
+        //CreateMap<CreateUpdatePatientDto, Patient>();
+        //CreateMap<Patient, PatientDto>().ReverseMap();
     }
 }
