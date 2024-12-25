@@ -1,0 +1,58 @@
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col col-md-6">
+                <h5 class="card-title">
+                    Manage Hospital Tanent
+                </h5>
+            </div>
+            <div class="text-end col col-md-6">
+                <div class="text-lg-end">
+                    <button id="create" class="btn btn-primary" type="button" (click)="createUpdate()">
+                        <i class="fa fa-plus me-1"></i>
+                        <span>{{ '::Create Serivice' | abpLocalization }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <nz-table #basicTable [nzBordered]="true" [nzData]="hospitals.items" [nzSize]="'middle'" [nzBordered]="true"
+            [nzShowPagination]="false" [nzScroll]="{ x: '1000px' }">
+            <thead>
+                <tr>
+                    <th nzWidth="10%">Mã Bệnh Viện</th>
+                    <th nzWidth="15%">Tên Bệnh Viện</th>
+                    <th nzWidth="10%">Hotline</th>
+                    <th nzWidth="10%">Admin</th>
+                    <th nzWidth="20%">Địa chỉ chi tiết</th>
+                    <th nzWidth="15%">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of hospitals.items">
+                    <td>{{ item.hospitalCode }}</td>
+                    <td>{{ item.hospitalName }}</td>
+                    <td>{{ item.hotline }}</td>
+                    <td>{{ item.adminHospitalName }}</td>
+                    <td>{{ item.detailAddress || 'N/A' }}</td>
+                    <td>
+                        <button (click)="createUpdate(item.hospitalId)"
+                            style="padding: .3rem 1rem ; margin-right: 10px;" class="btn btn-outline-primary">
+                            {{ '::Edit' | abpLocalization }}
+                        </button>
+                        <button style="padding: .3rem 1rem ;" class="btn btn-outline-primary">
+                            {{ '::Delete' | abpLocalization }}
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+
+        <!-- Phân trang -->
+        <div class="my-2"></div>
+        <nz-pagination [nzPageSize]="pageSize" [nzTotal]="hospitals.totalCount"
+            (nzPageIndexChange)="onPageChange($event)">
+        </nz-pagination>
+    </div>
+</div>

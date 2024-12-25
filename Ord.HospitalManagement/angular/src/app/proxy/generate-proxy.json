@@ -1345,6 +1345,375 @@
             }
           }
         },
+        "Ord.HospitalManagement.Services.ManegeHospital.MangePatientHospital": {
+          "controllerName": "MangePatientHospital",
+          "controllerGroupName": "MangePatientHospital",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "Ord.HospitalManagement.Services.ManegeHospital.MangePatientHospital",
+          "interfaces": [
+            {
+              "type": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital",
+              "name": "IMangePatientHospital",
+              "methods": [
+                {
+                  "name": "GetAllPatientByFilter",
+                  "parametersOnMethod": [
+                    {
+                      "name": "pageNumber",
+                      "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.Int32?",
+                      "typeSimple": "number?",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "pageSize",
+                      "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.Int32?",
+                      "typeSimple": "number?",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "name",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "code",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.Hospital.PatientDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.Hospital.PatientDto>"
+                  }
+                },
+                {
+                  "name": "CreatePatiendAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto, Ord.HospitalManagement.Application.Contracts",
+                      "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                      "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Ord.HospitalManagement.DTOs.Hospital.PatientDto",
+                    "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.PatientDto"
+                  }
+                },
+                {
+                  "name": "UpdatePatiendAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Int32, System.Private.CoreLib",
+                      "type": "System.Int32",
+                      "typeSimple": "number",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "input",
+                      "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto, Ord.HospitalManagement.Application.Contracts",
+                      "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                      "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Ord.HospitalManagement.DTOs.Hospital.PatientDto",
+                    "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.PatientDto"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "CreatePatiendAsyncByInput": {
+              "uniqueName": "CreatePatiendAsyncByInput",
+              "name": "CreatePatiendAsync",
+              "httpMethod": "POST",
+              "url": "api/app/mange-patient-hospital/patiend",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto, Ord.HospitalManagement.Application.Contracts",
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Ord.HospitalManagement.DTOs.Hospital.PatientDto",
+                "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.PatientDto"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital"
+            },
+            "UpdatePatiendAsyncByIdAndInput": {
+              "uniqueName": "UpdatePatiendAsyncByIdAndInput",
+              "name": "UpdatePatiendAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/mange-patient-hospital/{id}/patiend",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "input",
+                  "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto, Ord.HospitalManagement.Application.Contracts",
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Ord.HospitalManagement.DTOs.Hospital.PatientDto",
+                "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.PatientDto"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital"
+            },
+            "GetAllPatientByFilterByPageNumberAndPageSizeAndNameAndCode": {
+              "uniqueName": "GetAllPatientByFilterByPageNumberAndPageSizeAndNameAndCode",
+              "name": "GetAllPatientByFilter",
+              "httpMethod": "GET",
+              "url": "api/app/mange-patient-hospital/patient-by-filter",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "pageNumber",
+                  "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "pageSize",
+                  "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "name",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "code",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "pageNumber",
+                  "name": "pageNumber",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "pageSize",
+                  "name": "pageSize",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "name",
+                  "name": "name",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "code",
+                  "name": "code",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.Hospital.PatientDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.Hospital.PatientDto>"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital"
+            }
+          }
+        },
+        "Ord.HospitalManagement.Services.ManegeHospital.UserHospitalSerivice": {
+          "controllerName": "UserHospitalSerivice",
+          "controllerGroupName": "UserHospitalSerivice",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "Ord.HospitalManagement.Services.ManegeHospital.UserHospitalSerivice",
+          "interfaces": [
+            {
+              "type": "Ord.HospitalManagement.IServices.Hospital.IUserHospitalSerivice",
+              "name": "IUserHospitalSerivice",
+              "methods": [
+                {
+                  "name": "GetHospitalId",
+                  "parametersOnMethod": [
+                    {
+                      "name": "currenAdminId",
+                      "typeAsString": "System.Nullable`1[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.Guid?",
+                      "typeSimple": "string?",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Int32?",
+                    "typeSimple": "number?"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Volo.Abp.DependencyInjection.IScopedDependency",
+              "name": "IScopedDependency",
+              "methods": []
+            }
+          ],
+          "actions": {
+            "GetHospitalIdByCurrenAdminId": {
+              "uniqueName": "GetHospitalIdByCurrenAdminId",
+              "name": "GetHospitalId",
+              "httpMethod": "GET",
+              "url": "api/app/user-hospital-serivice/hospital-id/{currenAdminId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "currenAdminId",
+                  "typeAsString": "System.Nullable`1[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.Guid?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "currenAdminId",
+                  "name": "currenAdminId",
+                  "jsonName": null,
+                  "type": "System.Guid?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Int32?",
+                "typeSimple": "number?"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IUserHospitalSerivice"
+            }
+          }
+        },
         "Ord.HospitalManagement.Services.ProvinceAppService": {
           "controllerName": "Province",
           "controllerGroupName": "Province",
@@ -2201,6 +2570,242 @@
               },
               "allowAnonymous": null,
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<Ord.HospitalManagement.DTOs.Address.WardDto,Ord.HospitalManagement.DTOs.Address.WardDto,System.Int32,Ord.HospitalManagement.DTOs.Address.ModelFilter.CustomePagedAndSortedResultRequestWardDto>"
+            }
+          }
+        },
+        "Ord.HospitalManagement.TenantAppService.TenantHospitalAppService": {
+          "controllerName": "TenantHospital",
+          "controllerGroupName": "TenantHospital",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "Ord.HospitalManagement.TenantAppService.TenantHospitalAppService",
+          "interfaces": [
+            {
+              "type": "Ord.HospitalManagement.IServices.ITenantHospitalAppService",
+              "name": "ITenantHospitalAppService",
+              "methods": [
+                {
+                  "name": "CreateHospitalAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto, Ord.HospitalManagement.Application.Contracts",
+                      "type": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto",
+                      "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "GetInfoHospitals",
+                  "parametersOnMethod": [
+                    {
+                      "name": "pageNumber",
+                      "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.Int32?",
+                      "typeSimple": "number?",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "pageSize",
+                      "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.Int32?",
+                      "typeSimple": "number?",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>"
+                  }
+                },
+                {
+                  "name": "UpdateInfoHospital",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Int32, System.Private.CoreLib",
+                      "type": "System.Int32",
+                      "typeSimple": "number",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "input",
+                      "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto, Ord.HospitalManagement.Application.Contracts",
+                      "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+                      "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto",
+                    "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "CreateHospitalAsyncByInput": {
+              "uniqueName": "CreateHospitalAsyncByInput",
+              "name": "CreateHospitalAsync",
+              "httpMethod": "POST",
+              "url": "api/app/tenant-hospital/hospital",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto, Ord.HospitalManagement.Application.Contracts",
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
+            },
+            "GetInfoHospitalsByPageNumberAndPageSize": {
+              "uniqueName": "GetInfoHospitalsByPageNumberAndPageSize",
+              "name": "GetInfoHospitals",
+              "httpMethod": "GET",
+              "url": "api/app/tenant-hospital/info-hospitals",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "pageNumber",
+                  "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "pageSize",
+                  "typeAsString": "System.Nullable`1[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "pageNumber",
+                  "name": "pageNumber",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "pageSize",
+                  "name": "pageSize",
+                  "jsonName": null,
+                  "type": "System.Int32?",
+                  "typeSimple": "number?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
+            },
+            "UpdateInfoHospitalByIdAndInput": {
+              "uniqueName": "UpdateInfoHospitalByIdAndInput",
+              "name": "UpdateInfoHospital",
+              "httpMethod": "PUT",
+              "url": "api/app/tenant-hospital/{id}/info-hospital",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "input",
+                  "typeAsString": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto, Ord.HospitalManagement.Application.Contracts",
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+                  "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto",
+                "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
             }
           }
         }
@@ -5396,6 +6001,621 @@
           "name": "ProvinceCode",
           "jsonName": null,
           "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Ord.HospitalManagement.DTOs.Hospital.CreateTenantHospitalDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "userHospital",
+          "jsonName": null,
+          "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUserHospital",
+          "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUserHospital",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "createHospital",
+          "jsonName": null,
+          "type": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+          "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Ord.HospitalManagement.DTOs.Hospital.CreateUpdateHospitalDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "HospitalName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": 100,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ProvinceCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DistrictCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WardCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HospitalDetailAddress",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HospitalDescription",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Hotline",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": 15,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Ord.HospitalManagement.DTOs.Hospital.CreateUpdatePatientDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Fullname",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ProvinceCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DistrictCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WardCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DetailAddress",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Birthday",
+          "jsonName": null,
+          "type": "System.DateTime?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "MedicalHistory",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Ord.HospitalManagement.DTOs.Hospital.CreateUserHospital": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UserName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": 128,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "EmailAddress",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Password",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": 6,
+          "maxLength": 32,
+          "minimum": null,
+          "maximum": null,
+          "regex": "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+        }
+      ]
+    },
+    "Ord.HospitalManagement.DTOs.Hospital.HospitalDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Int32>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "HospitalName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Hotline",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Code",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ProvinceCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DistrictCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WardCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HospitalDetailAddress",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HospitalDescription",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Ord.HospitalManagement.DTOs.Hospital.PatientDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Int32>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "HospitalId",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Code",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Fullname",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ProvinceCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DistrictCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WardCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DetailAddress",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Birthday",
+          "jsonName": null,
+          "type": "System.DateTime?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "MedicalHistory",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "Ord.HospitalManagement.DTOs.ManageInfoHospital": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "HospitalId",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HospitalName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HospitalCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ProvinceCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DistrictCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WardCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DetailAddress",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "AdminHospitalName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Hotline",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "UserId",
+          "jsonName": null,
+          "type": "System.Guid",
           "typeSimple": "string",
           "isRequired": false,
           "minLength": null,

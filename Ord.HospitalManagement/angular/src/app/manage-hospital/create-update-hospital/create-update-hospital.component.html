@@ -1,0 +1,93 @@
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col col-md-6">
+                <h5 class="card-title">
+                    Action Hospital Tanent
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <form nz-form [formGroup]="form" nzLabelAlign="left" (ngSubmit)="onSubmit()">
+            <div nz-row [nzGutter]="16">
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <h6 class="text-center">Hospital Details</h6>
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Hospital Name</nz-form-label>
+                        <nz-form-control [nzErrorTip]="'Please input hospital name'">
+                            <input nz-input formControlName="createHospital.hospitalName" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="7">Province Code</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="createHospital.provinceCode" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>District Code</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="createHospital.districtCode" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>Ward Code</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="createHospital.wardCode" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>Hospital Address</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="createHospital.hospitalDetailAddress" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label>Description</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="createHospital.hospitalDescription" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Hotline</nz-form-label>
+                        <nz-form-control [nzErrorTip]="'Please input hotline number'">
+                            <input nz-input formControlName="createHospital.hotline" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-col class="gutter-row" [nzSpan]="12">
+                    <h6 class="text-center">Create User Hospital</h6>
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Username</nz-form-label>
+                        <nz-form-control [nzErrorTip]="'Please input your username'">
+                            <input nz-input formControlName="userHospital.userName" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Email Address</nz-form-label>
+                        <nz-form-control [nzErrorTip]="'Please input a valid email address'">
+                            <input nz-input formControlName="userHospital.emailAddress" />
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzRequired>Password</nz-form-label>
+                        <nz-form-control [nzErrorTip]="'Please input your password'">
+                            <input nz-input type="password" formControlName="userHospital.password" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <button style="display: flex;justify-content: end;" nz-button [nzType]="'primary'" [disabled]="!form.valid">
+                Submit
+            </button>
+        </form>
+    </div>
+</div>

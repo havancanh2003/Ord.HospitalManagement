@@ -1,4 +1,5 @@
-﻿using Ord.HospitalManagement.DTOs.Hospital;
+﻿using Ord.HospitalManagement.DTOs;
+using Ord.HospitalManagement.DTOs.Hospital;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Ord.HospitalManagement.IServices
     public interface ITenantHospitalAppService : IApplicationService
     {
         Task CreateHospitalAsync(CreateTenantHospitalDto input);
-        Task<PagedResultDto<HospitalDto>> GetAllHospitals();
+        Task<PagedResultDto<ManageInfoHospital>> GetInfoHospitals(int? pageNumber, int? pageSize);
+        Task<HospitalDto> UpdateInfoHospital(int id, CreateUpdateHospitalDto input);
     }
 }

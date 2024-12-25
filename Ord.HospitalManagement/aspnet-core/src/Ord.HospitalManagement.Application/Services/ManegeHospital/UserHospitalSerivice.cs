@@ -11,7 +11,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Ord.HospitalManagement.Services.ManegeHospital
 {
-    internal class UserHospitalSerivice : ApplicationService, IUserHospitalSerivice, IScopedDependency
+    public class UserHospitalSerivice : ApplicationService, IUserHospitalSerivice, IScopedDependency
     {
         private readonly IRepository<UserHospital, int> _repository;
         public UserHospitalSerivice(IRepository<UserHospital, int> repository)
@@ -21,10 +21,10 @@ namespace Ord.HospitalManagement.Services.ManegeHospital
         public async Task<int?> GetHospitalId(Guid? currenAdminId)
         {
             var ush = await _repository.FirstOrDefaultAsync(uh => uh.UserId.Equals(currenAdminId));
-            if (ush == null) 
-                return null;
+            if (ush != null) 
+                return ush.HospitalId; ;
 
-            return ush.HospitalId;
+            return null;
         }
     }
 }

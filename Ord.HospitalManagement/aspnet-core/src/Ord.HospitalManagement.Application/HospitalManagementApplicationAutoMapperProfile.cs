@@ -23,7 +23,7 @@ public class HospitalManagementApplicationAutoMapperProfile : Profile
         CreateMap<CreateUpdateHospitalDto, Hospital>();
         CreateMap<Hospital, HospitalDto>().ReverseMap();
 
-        //CreateMap<CreateUpdatePatientDto, Patient>();
-        //CreateMap<Patient, PatientDto>().ReverseMap();
+        CreateMap<CreateUpdatePatientDto, Patient>();
+        CreateMap<Patient, PatientDto>().ReverseMap();
     }
 }

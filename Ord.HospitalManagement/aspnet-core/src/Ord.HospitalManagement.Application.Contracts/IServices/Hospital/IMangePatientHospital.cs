@@ -11,7 +11,9 @@ namespace Ord.HospitalManagement.IServices.Hospital
 {
     public interface IMangePatientHospital : IApplicationService
     {
-        Task<PagedResultDto<PatientDto>> GetAllPatient();
+        Task<PagedResultDto<PatientDto>> GetAllPatientByFilter(int? pageNumber, int? pageSize, string? name, string? code);
         Task<PatientDto> CreatePatiendAsync(CreateUpdatePatientDto input);
+        Task<PatientDto> UpdatePatiendAsync(int id,CreateUpdatePatientDto input);
+
     }
 }

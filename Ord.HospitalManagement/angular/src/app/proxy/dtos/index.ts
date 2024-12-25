@@ -1,2 +1,4 @@
 import * as Address from './address';
-export { Address };
+import * as Hospital from './hospital';
+export * from './models';
+export { Address, Hospital };

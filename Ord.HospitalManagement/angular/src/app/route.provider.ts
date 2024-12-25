@@ -40,6 +40,28 @@ function configureRoutes(routesService: RoutesService) {
         parentName: '::Menu:Address',
         layout: eLayoutType.application,
       },
+      //
+      {
+        path: '/manage-hospital',
+        name: '::Menu:Hospital',
+        iconClass: 'fas fa-book',
+        order: 3,
+        layout: eLayoutType.application,
+      },
+      {
+        path: '/manage-hospital',
+        name: '::List:Hospital',
+        iconClass: 'fas fa-book',
+        parentName: '::Menu:Hospital',
+        layout: eLayoutType.application,
+      },
+      {
+        path: '/manage-hospital/action-hospital',
+        name: '::Action:Hospital',
+        iconClass: 'fas fa-book',
+        parentName: '::Menu:Hospital',
+        layout: eLayoutType.application,
+      },
     ]);
   };
 }

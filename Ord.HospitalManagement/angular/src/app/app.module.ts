@@ -22,6 +22,7 @@ import { ThemeLeptonXModule } from '@abp/ng.theme.lepton-x';
 import { SideMenuLayoutModule } from '@abp/ng.theme.lepton-x/layouts';
 import { AccountLayoutModule } from '@abp/ng.theme.lepton-x/account';
 import { ManageAddressModule } from './manage-address/manage-address.module';
+import { ManageHospitalModule } from './manage-hospital/manage-hospital.module';
 
 @NgModule({
   imports: [
@@ -30,14 +31,12 @@ import { ManageAddressModule } from './manage-address/manage-address.module';
     AppRoutingModule,
     CoreModule,
     ThemeSharedModule,
-    
-    
-    
     InternetConnectionStatusComponent,
-                   ThemeLeptonXModule.forRoot(),
-                   SideMenuLayoutModule.forRoot(),
-                   AccountLayoutModule.forRoot(),
-                   ManageAddressModule,
+    ThemeLeptonXModule.forRoot(),
+    SideMenuLayoutModule.forRoot(),
+    AccountLayoutModule.forRoot(),
+    ManageAddressModule,
+    ManageHospitalModule,
   ],
   declarations: [AppComponent],
   providers: [

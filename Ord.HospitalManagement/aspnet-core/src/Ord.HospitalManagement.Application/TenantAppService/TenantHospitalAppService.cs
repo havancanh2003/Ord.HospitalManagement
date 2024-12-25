@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Ord.HospitalManagement.DapperRepo;
 using Ord.HospitalManagement.DomainServices;
+using Ord.HospitalManagement.DTOs;
 using Ord.HospitalManagement.DTOs.Address;
 using Ord.HospitalManagement.DTOs.Hospital;
 using Ord.HospitalManagement.Entities;
@@ -24,32 +26,29 @@ namespace Ord.HospitalManagement.TenantAppService
 {
     public class TenantHospitalAppService : ApplicationService, ITenantHospitalAppService
     {
-        private readonly ITenantRepository _tenantRepository;
-        private readonly ITenantManager _tenantManager;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IGenerateCode _generateCode;
         private readonly IRepository<Hospital, int> _repository;
         private readonly IRepository<UserHospital, int> _userHospitalRepository;
         private readonly IdentityUserManager _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly DapperRepo.DapperRepo _dapper;
 
         public TenantHospitalAppService(
-            ITenantRepository tenantRepository,
-            ITenantManager tenantManager,
             IUnitOfWorkManager unitOfWorkManager,
             IdentityUserManager userManager,
             IGenerateCode generateCode,
+            DapperRepo.DapperRepo dapper,
             RoleManager<IdentityRole> roleManager,
             IRepository<UserHospital, int> userHospitalRepository,
             IRepository<Hospital, int> repository
             )
         {
-            _tenantRepository = tenantRepository;
-            _tenantManager = tenantManager;
             _unitOfWorkManager = unitOfWorkManager;
             _userManager = userManager;
             _generateCode = generateCode;
             _repository = repository;
+            _dapper = dapper;
             _roleManager = roleManager;
             _userHospitalRepository = userHospitalRepository;
         }
@@ -65,7 +64,7 @@ namespace Ord.HospitalManagement.TenantAppService
                 if (input.createHospital == null)
                     throw new ArgumentNullException();
                 var role = await _roleManager.FindByNameAsync(RolesConstant.AdminHospital);
-                using (var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: true))
+                using (var uow = _unitOfWorkManager.Begin())
                 {
                     try
                     {
@@ -92,7 +91,7 @@ namespace Ord.HospitalManagement.TenantAppService
                             UserId = adminUser.Id,
                             HospitalId = hospitalEntity.Id
                         };
-                        throw new UserFriendlyException("Failed to create admin user for the hospital.");
+                        //throw new UserFriendlyException("Failed to create admin user for the hospital.");
                         await _userHospitalRepository.InsertAsync(adminHopital);
                         await uow.CompleteAsync();
                     }
@@ -108,79 +107,46 @@ namespace Ord.HospitalManagement.TenantAppService
                 throw new Exception (ex.Message);
             }
         }
-        //public async Task CreateHospitalAsync(CreateTenantHospitalDto input)
-        //{
-        //    //try
-        //    //{
-        //    //    if (input == null)
-        //    //        throw new ArgumentNullException();
-        //    //    if (input.userHospital == null)
-        //    //        throw new ArgumentNullException();
-        //    //    if (input.createHospital == null)
-        //    //        throw new ArgumentNullException();
-
-        //    //    var role = await _roleManager.FindByNameAsync(RolesConstant.AdminHospital);
-
-        //    //    var tenant = await _tenantManager.CreateAsync(new Guid().ToString());
-        //    //    await _tenantRepository.InsertAsync(tenant);
-
-        //    //    using (CurrentTenant.Change(tenant.Id))
-        //    //    {
-        //    //        var adminUser = new IdentityUser(
-        //    //            GuidGenerator.Create(),
-        //    //            input.userHospital.UserName,
-        //    //            input.userHospital.EmailAddress,
-        //    //            tenant.Id
-        //    //        );
-        //    //        adminUser.AddRole(role!.Id);
-
-        //    //        var createUserResult = await _userManager.CreateAsync(adminUser, input.userHospital.Password);
-        //    //        if (!createUserResult.Succeeded)
-        //    //        {
-        //    //            throw new UserFriendlyException("Failed to create admin user for the hospital.");
-        //    //        }
-
-        //    //        //var addToRoleResult = await _userManager.AddToRoleAsync(adminUser, RolesConstant.AdminHospital);
-        //    //        //if (!addToRoleResult.Succeeded)
-        //    //        //{
-        //    //        //    throw new UserFriendlyException($"Failed to add admin role: {string.Join(", ", addToRoleResult.Errors.Select(e => e.Description))}");
-        //    //        //}
-
-        //    //        var hoptitalEntity = ObjectMapper.Map<CreateUpdateHospitalDto, Hospital>(input.createHospital);
-        //    //        hoptitalEntity.Code = _generateCode.AutoGenerateCode(PrefixGencode.PrefixGencode.HOSP);
-        //    //        //hoptitalEntity.UserHospitalId = adminUser.Id
-
-        //    //        await _repository.InsertAsync(hoptitalEntity);
-        //    //    }
-        //    //    //using (var uow = _unitOfWorkManager.Begin())
-        //    //    //{
-        //    //    //    try
-        //    //    //    {
-        //    //    //        await uow.CompleteAsync();
-
-        //    //    //    }
-        //    //    //    catch
-        //    //    //    {
-        //    //    //        await uow.RollbackAsync();
-        //    //    //    }
-        //    //    //}
-        //    //}
-        //    //catch (Exception ex)
-        //    //{
-        //    //    throw;
-        //    //}
-        //}
-
-        public async Task<PagedResultDto<HospitalDto>> GetAllHospitals()
+        public async Task<PagedResultDto<ManageInfoHospital>> GetInfoHospitals(int? pageNumber, int? pageSize)
         {
-            var list = await _repository.GetListAsync();
-            var dtos = ObjectMapper.Map<List<Hospital>, List<HospitalDto>>(list);
-            var totalCount = await _repository.GetCountAsync();
+            int currentPageNumber = pageNumber ?? 1;
+            int currentPageSize = pageSize ?? 10;
+            int offset = (currentPageNumber - 1) * currentPageSize;
+            var limitClause = $"LIMIT {currentPageSize} OFFSET {offset}";
 
-            return new PagedResultDto<HospitalDto>(
-                totalCount,
-                dtos
+            var query = $@"
+                        SELECT COUNT(*) FROM Hospital;
+                        SELECT 
+                            uh.HospitalId,
+                            h.HospitalName,
+                            h.Code AS HospitalCode,
+                            h.ProvinceCode,
+                            h.DistrictCode,
+                            h.WardCode,
+                            h.HospitalDetailAddress,
+                            u.UserName AS AdminHospitalName,
+                            h.Hotline,
+                            uh.UserId
+                        FROM UserHospital uh
+                        INNER JOIN Hospital h ON uh.HospitalId = h.Id
+                        INNER JOIN AbpUsers u ON u.Id = uh.UserId
+                        ORDER BY h.HospitalName
+                        {limitClause}";
+
+            var result = await _dapper.QueryMultiGetAsync<ManageInfoHospital>(query);
+
+            return new PagedResultDto<ManageInfoHospital>(
+                result.total,
+                result.lists.ToList()
             );
+        }
+        public async Task<HospitalDto> UpdateInfoHospital(int id, CreateUpdateHospitalDto input)
+        {
+            var hospital = await _repository.GetAsync(id);
+            ObjectMapper.Map(input,hospital);
+
+            await _repository.UpdateAsync(hospital);
+            return ObjectMapper.Map<Hospital, HospitalDto>(hospital);
         }
     }
 }

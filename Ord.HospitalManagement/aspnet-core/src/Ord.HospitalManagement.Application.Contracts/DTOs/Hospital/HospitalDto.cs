@@ -12,7 +12,6 @@ namespace Ord.HospitalManagement.DTOs.Hospital
         public string? HospitalName { get; set; }
         public string Hotline { get; set; } = null!;
         public string? Code { get; set; } 
-        public string? UserHospitalId { get; set; } 
         public string? ProvinceCode { get; set; } 
         public string? DistrictCode { get; set; } 
         public string? WardCode { get; set; } 

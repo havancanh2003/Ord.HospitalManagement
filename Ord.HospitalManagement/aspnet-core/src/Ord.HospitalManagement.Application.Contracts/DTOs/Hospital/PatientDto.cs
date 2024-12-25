@@ -4,9 +4,8 @@ using Volo.Abp.MultiTenancy;
 
 namespace Ord.HospitalManagement.DTOs.Hospital
 {
-    public class PatientDto : AuditedEntityDto<int>, IMultiTenant
+    public class PatientDto : AuditedEntityDto<int>
     {
-        public Guid? TenantId { get; set; }
         public int HospitalId { get; set; }
         public string Code { get; set; } = null!;
         public string Fullname { get; set; } = null!;
