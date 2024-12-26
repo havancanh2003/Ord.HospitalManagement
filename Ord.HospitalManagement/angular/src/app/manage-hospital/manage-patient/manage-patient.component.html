@@ -1,0 +1,132 @@
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col col-md-6">
+                <h5 class="card-title">
+                    Manage Patient Hospital
+                </h5>
+            </div>
+            <div class="text-end col col-md-6">
+                <div class="text-lg-end">
+                    <button style="border-radius: 10px;" nz-button [nzType]="'primary'"
+                        (click)="createUpdate()"><span>Show
+                            Modal</span></button>
+                    <!-- <button id="create" class="btn btn-primary" type="button" (click)="createUpdate()">
+                        <i class="fa fa-plus me-1"></i>
+                        <span>{{ '::CreatePatient' | abpLocalization }}</span>
+                    </button> -->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col col-md-6">
+                <nz-input-group>
+                    <input (keyup.enter)="loadData()" [(ngModel)]="nameSearch" type="text" nz-input
+                        placeholder="Enter to search by name" />
+                </nz-input-group>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <nz-table #basicTable [nzBordered]="true" [nzData]="patients.items" [nzSize]="'middle'" [nzBordered]="true"
+            [nzShowPagination]="false" [nzScroll]="{ x: '1000px' }">
+            <thead>
+                <tr>
+                    <th nzWidth="10%">Mã Bệnh Nhân</th>
+                    <th nzWidth="15%">Tên Bệnh Nhân</th>
+                    <th nzWidth="10%">Ngày sinh</th>
+                    <th nzWidth="20%">Tiền sử bệnh</th>
+                    <th nzWidth="20%">Địa chỉ chi tiết</th>
+                    <th nzWidth="15%">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of patients.items">
+                    <td>{{ item.code }}</td>
+                    <td>{{ item.fullname }}</td>
+                    <td>{{ item.birthday | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ item.medicalHistory }}</td>
+                    <td>{{ item.detailAddress || 'N/A' }}</td>
+                    <td>
+                        <button (click)="createUpdate(item.id)" style="padding: .3rem 1rem ; margin-right: 10px;"
+                            class="btn btn-outline-primary">
+                            {{ '::Edit' | abpLocalization }}
+                        </button>
+                        <button style="padding: .3rem 1rem ;" class="btn btn-outline-primary">
+                            {{ '::Delete' | abpLocalization }}
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+
+        <!-- Phân trang -->
+        <div class="my-2"></div>
+        <nz-pagination [nzPageSize]="pageSize" [nzTotal]="patients.totalCount"
+            (nzPageIndexChange)="onPageChange($event)">
+        </nz-pagination>
+    </div>
+</div>
+<nz-modal [(nzVisible)]="isVisible" nzTitle="The first Modal" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="form" nzLabelAlign="left" nzControlAlign="right">
+            <div nz-row [nzGutter]="16">
+                <div nz-col nzSpan="24" class="gutter-row">
+                    <nz-form-item>
+                        <nz-form-label nzSpan="7" nzRequired>Patient Name</nz-form-label>
+                        <nz-form-control nzSpan="17" [nzErrorTip]="'Please input hospital name'">
+                            <input nz-input formControlName="fullname" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzSpan="7">Medical History</nz-form-label>
+                        <nz-form-control nzSpan="17" [nzErrorTip]="'Lịch sử bệnh'">
+                            <input nz-input formControlName="medicalHistory" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzSpan="7">Birthday</nz-form-label>
+                        <nz-form-control nzSpan="17" [nzErrorTip]="'Please input hospital name'">
+                            <input nz-input type="date" formControlName="birthday" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="7">Province Code</nz-form-label>
+                        <nz-select style="width: calc(100% - 29.166666667%);" (ngModelChange)="onProvinceChange($event)"
+                            nzShowSearch nzAllowClear nzPlaceHolder="Select a province" formControlName="provinceCode">
+                            <nz-option *ngFor="let province of listProvince" [nzLabel]="province.name"
+                                [nzValue]="province.code">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzSpan="7">District Code</nz-form-label>
+                        <nz-select style="width: calc(100% - 29.166666667%);" (ngModelChange)="onDistrictChange($event)"
+                            nzShowSearch nzAllowClear nzPlaceHolder="Select a district" formControlName="districtCode">
+                            <nz-option *ngFor="let district of listDistrict" [nzLabel]="district.name"
+                                [nzValue]="district.code">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzSpan="7">Ward Code</nz-form-label>
+                        <nz-select style="width: calc(100% - 29.166666667%);" nzShowSearch nzAllowClear
+                            nzPlaceHolder="Select a ward" formControlName="wardCode">
+                            <nz-option *ngFor="let ward of listWard" [nzLabel]="ward.name" [nzValue]="ward.code">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                        <nz-form-label nzSpan="7">Detail Address</nz-form-label>
+                        <nz-form-control nzSpan="17">
+                            <input nz-input formControlName="detailAddress" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </form>
+    </ng-container>
+</nz-modal>

@@ -1399,7 +1399,7 @@
                   }
                 },
                 {
-                  "name": "CreatePatiendAsync",
+                  "name": "CreatePatientAsync",
                   "parametersOnMethod": [
                     {
                       "name": "input",
@@ -1416,7 +1416,7 @@
                   }
                 },
                 {
-                  "name": "UpdatePatiendAsync",
+                  "name": "UpdatePatientAsync",
                   "parametersOnMethod": [
                     {
                       "name": "id",
@@ -1444,11 +1444,11 @@
             }
           ],
           "actions": {
-            "CreatePatiendAsyncByInput": {
-              "uniqueName": "CreatePatiendAsyncByInput",
-              "name": "CreatePatiendAsync",
+            "CreatePatientAsyncByInput": {
+              "uniqueName": "CreatePatientAsyncByInput",
+              "name": "CreatePatientAsync",
               "httpMethod": "POST",
-              "url": "api/app/mange-patient-hospital/patiend",
+              "url": "api/app/mange-patient-hospital/patient",
               "supportedVersions": [],
               "parametersOnMethod": [
                 {
@@ -1478,14 +1478,14 @@
                 "type": "Ord.HospitalManagement.DTOs.Hospital.PatientDto",
                 "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.PatientDto"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital"
             },
-            "UpdatePatiendAsyncByIdAndInput": {
-              "uniqueName": "UpdatePatiendAsyncByIdAndInput",
-              "name": "UpdatePatiendAsync",
+            "UpdatePatientAsyncByIdAndInput": {
+              "uniqueName": "UpdatePatientAsyncByIdAndInput",
+              "name": "UpdatePatientAsync",
               "httpMethod": "PUT",
-              "url": "api/app/mange-patient-hospital/{id}/patiend",
+              "url": "api/app/mange-patient-hospital/{id}/patient",
               "supportedVersions": [],
               "parametersOnMethod": [
                 {
@@ -1535,8 +1535,45 @@
                 "type": "Ord.HospitalManagement.DTOs.Hospital.PatientDto",
                 "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.PatientDto"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital"
+            },
+            "GetHospitalAsyncById": {
+              "uniqueName": "GetHospitalAsyncById",
+              "name": "GetHospitalAsync",
+              "httpMethod": "GET",
+              "url": "api/app/mange-patient-hospital/{id}/hospital",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Ord.HospitalManagement.DTOs.Hospital.PatientDto",
+                "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.PatientDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "Ord.HospitalManagement.Services.ManegeHospital.MangePatientHospital"
             },
             "GetAllPatientByFilterByPageNumberAndPageSizeAndNameAndCode": {
               "uniqueName": "GetAllPatientByFilterByPageNumberAndPageSizeAndNameAndCode",
@@ -1632,7 +1669,7 @@
                 "type": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.Hospital.PatientDto>",
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.Hospital.PatientDto>"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital"
             }
           }
@@ -2690,7 +2727,7 @@
                 "type": "System.Void",
                 "typeSimple": "System.Void"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
             },
             "GetInfoHospitalsByPageNumberAndPageSize": {
@@ -2747,8 +2784,45 @@
                 "type": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>",
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
+            },
+            "GetHospitalAsyncById": {
+              "uniqueName": "GetHospitalAsyncById",
+              "name": "GetHospitalAsync",
+              "httpMethod": "GET",
+              "url": "api/app/tenant-hospital/{id}/hospital",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto",
+                "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "Ord.HospitalManagement.TenantAppService.TenantHospitalAppService"
             },
             "UpdateInfoHospitalByIdAndInput": {
               "uniqueName": "UpdateInfoHospitalByIdAndInput",
@@ -2804,7 +2878,7 @@
                 "type": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto",
                 "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto"
               },
-              "allowAnonymous": null,
+              "allowAnonymous": false,
               "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
             }
           }
@@ -6149,7 +6223,7 @@
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
-          "isRequired": false,
+          "isRequired": true,
           "minLength": null,
           "maxLength": null,
           "minimum": null,
@@ -6590,6 +6664,18 @@
         },
         {
           "name": "AdminHospitalName",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "HospitalDescription",
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",

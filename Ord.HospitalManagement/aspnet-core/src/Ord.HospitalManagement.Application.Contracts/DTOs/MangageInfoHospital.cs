@@ -16,6 +16,7 @@ namespace Ord.HospitalManagement.DTOs
         public string? WardCode { get; set; }
         public string? DetailAddress { get; set; }
         public string? AdminHospitalName { get; set; }
+        public string? HospitalDescription { get; set; }
         public string? Hotline { get; set; }
         public Guid UserId { get; set; }
     }

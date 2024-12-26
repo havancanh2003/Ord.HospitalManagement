@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Ord.HospitalManagement.DapperRepo;
 using Ord.HospitalManagement.DomainServices;
 using Ord.HospitalManagement.DTOs;
@@ -24,6 +26,7 @@ using Volo.Abp.Uow;
 
 namespace Ord.HospitalManagement.TenantAppService
 {
+    [Authorize]
     public class TenantHospitalAppService : ApplicationService, ITenantHospitalAppService
     {
         private readonly IUnitOfWorkManager _unitOfWorkManager;
@@ -58,11 +61,11 @@ namespace Ord.HospitalManagement.TenantAppService
             try
             {
                 if (input == null)
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("Hãy nhập đầy đủ các trường thông tin");
                 if (input.userHospital == null)
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("User admin của bệnh viện không được để trống");
                 if (input.createHospital == null)
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException("Thông tin bệnh viện không được để trống");
                 var role = await _roleManager.FindByNameAsync(RolesConstant.AdminHospital);
                 using (var uow = _unitOfWorkManager.Begin())
                 {
@@ -78,7 +81,7 @@ namespace Ord.HospitalManagement.TenantAppService
                         var createUserResult = await _userManager.CreateAsync(adminUser, input.userHospital.Password);
                         if (!createUserResult.Succeeded)
                         {
-                            throw new UserFriendlyException("Failed to create admin user for the hospital.");
+                            throw new UserFriendlyException("Xảy ra lỗi trong quá trình thêm user admin của bệnh viện.");
                         }
                         var hospitalEntity = ObjectMapper.Map<CreateUpdateHospitalDto, Hospital>(input.createHospital);
                         hospitalEntity.Code = _generateCode.AutoGenerateCode(PrefixGencode.PrefixGencode.HOSP);
@@ -91,13 +94,13 @@ namespace Ord.HospitalManagement.TenantAppService
                             UserId = adminUser.Id,
                             HospitalId = hospitalEntity.Id
                         };
-                        //throw new UserFriendlyException("Failed to create admin user for the hospital.");
                         await _userHospitalRepository.InsertAsync(adminHopital);
                         await uow.CompleteAsync();
                     }
                     catch
                     {
                         await uow.RollbackAsync();
+                        await uow.CompleteAsync();
                         throw;
                     }
                 }
@@ -109,16 +112,19 @@ namespace Ord.HospitalManagement.TenantAppService
         }
         public async Task<PagedResultDto<ManageInfoHospital>> GetInfoHospitals(int? pageNumber, int? pageSize)
         {
-            int currentPageNumber = pageNumber ?? 1;
-            int currentPageSize = pageSize ?? 10;
-            int offset = (currentPageNumber - 1) * currentPageSize;
-            var limitClause = $"LIMIT {currentPageSize} OFFSET {offset}";
+            try
+            {
+                int currentPageNumber = pageNumber ?? 1;
+                int currentPageSize = pageSize ?? 10;
+                int offset = (currentPageNumber - 1) * currentPageSize;
+                var limitClause = $"LIMIT {currentPageSize} OFFSET {offset}";
 
-            var query = $@"
+                var query = $@"
                         SELECT COUNT(*) FROM Hospital;
                         SELECT 
                             uh.HospitalId,
                             h.HospitalName,
+                            h.HospitalDescription,
                             h.Code AS HospitalCode,
                             h.ProvinceCode,
                             h.DistrictCode,
@@ -133,20 +139,48 @@ namespace Ord.HospitalManagement.TenantAppService
                         ORDER BY h.HospitalName
                         {limitClause}";
 
-            var result = await _dapper.QueryMultiGetAsync<ManageInfoHospital>(query);
+                var result = await _dapper.QueryMultiGetAsync<ManageInfoHospital>(query);
 
-            return new PagedResultDto<ManageInfoHospital>(
-                result.total,
-                result.lists.ToList()
-            );
+                return new PagedResultDto<ManageInfoHospital>(
+                    result.total,
+                    result.lists.ToList()
+                );
+            }
+            catch (Exception ex) { 
+                throw new Exception (ex.Message);
+            }
+        }
+
+        public async Task<HospitalDto> GetHospitalAsync(int id)
+        {
+            try
+            {
+                var hospital = await _repository.GetAsync(id);
+                if (hospital == null)
+                    throw new ArgumentNullException("Không tồn tại thông tin bệnh viện trong hệ thống");
+                return ObjectMapper.Map<Hospital, HospitalDto>(hospital);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         public async Task<HospitalDto> UpdateInfoHospital(int id, CreateUpdateHospitalDto input)
         {
-            var hospital = await _repository.GetAsync(id);
-            ObjectMapper.Map(input,hospital);
+            try
+            {
+                var hospital = await _repository.GetAsync(id);
+                if (hospital == null)
+                    throw new ArgumentNullException("Không tồn tại thông tin bệnh viện trong hệ thống");
+                ObjectMapper.Map(input,hospital);
 
-            await _repository.UpdateAsync(hospital);
-            return ObjectMapper.Map<Hospital, HospitalDto>(hospital);
+                await _repository.UpdateAsync(hospital);
+                return ObjectMapper.Map<Hospital, HospitalDto>(hospital);
+
+            }catch(Exception ex)
+            {
+                throw new Exception (ex.Message);
+            }
         }
     }
 }

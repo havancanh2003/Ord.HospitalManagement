@@ -20,6 +20,14 @@ export class TenantHospitalService {
     { apiName: this.apiName,...config });
   
 
+  getHospital = (id: number, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, HospitalDto>({
+      method: 'GET',
+      url: `/api/app/tenant-hospital/${id}/hospital`,
+    },
+    { apiName: this.apiName,...config });
+  
+
   getInfoHospitalsByPageNumberAndPageSize = (pageNumber: number, pageSize: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PagedResultDto<ManageInfoHospital>>({
       method: 'GET',

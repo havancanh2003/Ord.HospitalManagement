@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RoleGuard } from './role.guard';
 
 const routes: Routes = [
   {
@@ -29,6 +30,7 @@ const routes: Routes = [
     path: 'address',
     loadChildren: () =>
       import('./manage-address/manage-address.module').then(m => m.ManageAddressModule),
+    canMatch: [RoleGuard],
   },
   {
     path: 'manage-hospital',

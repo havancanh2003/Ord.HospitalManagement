@@ -1,7 +1,7 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
 
 export interface CreateUpdatePatientDto {
-  fullname?: string;
+  fullname: string;
   provinceCode?: string;
   districtCode?: string;
   wardCode?: string;

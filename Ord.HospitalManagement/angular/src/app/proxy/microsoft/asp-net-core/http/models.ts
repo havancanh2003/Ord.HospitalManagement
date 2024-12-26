@@ -1,4 +1,4 @@
-type StringValues = string | string[];
+type StringValues = string;
 export interface IFormFile {
   contentType?: string;
   contentDisposition?: string;

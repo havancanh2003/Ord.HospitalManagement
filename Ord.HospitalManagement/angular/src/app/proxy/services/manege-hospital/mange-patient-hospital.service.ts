@@ -10,10 +10,10 @@ export class MangePatientHospitalService {
   apiName = 'Default';
   
 
-  createPatiend = (input: CreateUpdatePatientDto, config?: Partial<Rest.Config>) =>
+  createPatient = (input: CreateUpdatePatientDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PatientDto>({
       method: 'POST',
-      url: '/api/app/mange-patient-hospital/patiend',
+      url: '/api/app/mange-patient-hospital/patient',
       body: input,
     },
     { apiName: this.apiName,...config });
@@ -28,10 +28,18 @@ export class MangePatientHospitalService {
     { apiName: this.apiName,...config });
   
 
-  updatePatiend = (id: number, input: CreateUpdatePatientDto, config?: Partial<Rest.Config>) =>
+  getHospital = (id: number, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, PatientDto>({
+      method: 'GET',
+      url: `/api/app/mange-patient-hospital/${id}/hospital`,
+    },
+    { apiName: this.apiName,...config });
+  
+
+  updatePatient = (id: number, input: CreateUpdatePatientDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PatientDto>({
       method: 'PUT',
-      url: `/api/app/mange-patient-hospital/${id}/patiend`,
+      url: `/api/app/mange-patient-hospital/${id}/patient`,
       body: input,
     },
     { apiName: this.apiName,...config });

@@ -1,11 +1,17 @@
-import { RoutesService, eLayoutType } from '@abp/ng.core';
+import { ConfigStateService, RoutesService, eLayoutType } from '@abp/ng.core';
 import { APP_INITIALIZER } from '@angular/core';
 
 export const APP_ROUTE_PROVIDER = [
-  { provide: APP_INITIALIZER, useFactory: configureRoutes, deps: [RoutesService], multi: true },
+  {
+    provide: APP_INITIALIZER,
+    useFactory: configureRoutes,
+    deps: [RoutesService, ConfigStateService],
+    multi: true,
+  },
 ];
 
-function configureRoutes(routesService: RoutesService) {
+function configureRoutes(routesService: RoutesService, configStateService: ConfigStateService) {
+  console.log(configStateService.getAll());
   return () => {
     routesService.add([
       {
@@ -21,6 +27,7 @@ function configureRoutes(routesService: RoutesService) {
         iconClass: 'fas fa-book',
         order: 2,
         layout: eLayoutType.application,
+        requiredPolicy: 'AbpIdentity.Roles',
       },
       {
         path: '/address/province',
@@ -39,6 +46,7 @@ function configureRoutes(routesService: RoutesService) {
         name: '::Menu:Ward',
         parentName: '::Menu:Address',
         layout: eLayoutType.application,
+        requiredPolicy: '',
       },
       //
       {
@@ -56,10 +64,11 @@ function configureRoutes(routesService: RoutesService) {
         layout: eLayoutType.application,
       },
       {
-        path: '/manage-hospital/action-hospital',
-        name: '::Action:Hospital',
+        path: '/manage-hospital/manage-patient',
+        name: '::Action:Patient',
         iconClass: 'fas fa-book',
         parentName: '::Menu:Hospital',
+        requiredPolicy: 'Management Hospital',
         layout: eLayoutType.application,
       },
     ]);

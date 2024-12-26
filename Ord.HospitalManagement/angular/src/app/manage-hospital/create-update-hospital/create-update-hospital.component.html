@@ -2,92 +2,111 @@
     <div class="card-header">
         <div class="row">
             <div class="col col-md-6">
-                <h5 class="card-title">
-                    Action Hospital Tanent
-                </h5>
+                <h4 class="card-title">
+                    Action Hospital Tenant
+                </h4>
             </div>
         </div>
     </div>
-    <div class="card-body">
-        <form nz-form [formGroup]="form" nzLabelAlign="left" (ngSubmit)="onSubmit()">
-            <div nz-row [nzGutter]="16">
-                <div nz-col class="gutter-row" [nzSpan]="12">
-                    <h6 class="text-center">Hospital Details</h6>
-                    <nz-form-item>
-                        <nz-form-label nzRequired>Hospital Name</nz-form-label>
-                        <nz-form-control [nzErrorTip]="'Please input hospital name'">
-                            <input nz-input formControlName="createHospital.hospitalName" />
-                        </nz-form-control>
-                    </nz-form-item>
-                    <nz-form-item>
-                        <nz-form-label [nzSpan]="7">Province Code</nz-form-label>
-                        <nz-form-control>
-                            <input nz-input formControlName="createHospital.provinceCode" />
-                        </nz-form-control>
-                    </nz-form-item>
+    <div *ngIf="form">
+        <div class="card-body">
+            <form nz-form [formGroup]="form" nzLabelAlign="left" nzControlAlign="right" (ngSubmit)="onSubmit()">
+                <div nz-row [nzGutter]="16">
+                    <div nz-col class="gutter-row" [nzSpan]="12">
+                        <div formGroupName="createHospital">
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7" nzRequired>Hospital Name</nz-form-label>
+                                <nz-form-control nzSpan="17" [nzErrorTip]="'Please input hospital name'">
+                                    <input nz-input formControlName="hospitalName" />
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7" nzRequired>Hotline</nz-form-label>
+                                <nz-form-control nzSpan="17" [nzErrorTip]="'Please input hotline number'">
+                                    <input nz-input formControlName="hotline" />
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="7">Province Code</nz-form-label>
+                                <nz-select style="width: calc(100% - 29.166666667%);"
+                                    (ngModelChange)="onProvinceChange($event)" nzShowSearch nzAllowClear
+                                    nzPlaceHolder="Select a province" formControlName="provinceCode">
+                                    <nz-option *ngFor="let province of listProvince" [nzLabel]="province.name"
+                                        [nzValue]="province.code">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-item>
 
-                    <nz-form-item>
-                        <nz-form-label>District Code</nz-form-label>
-                        <nz-form-control>
-                            <input nz-input formControlName="createHospital.districtCode" />
-                        </nz-form-control>
-                    </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7">District Code</nz-form-label>
+                                <nz-select style="width: calc(100% - 29.166666667%);"
+                                    (ngModelChange)="onDistrictChange($event)" nzShowSearch nzAllowClear
+                                    nzPlaceHolder="Select a district" formControlName="districtCode">
+                                    <nz-option *ngFor="let district of listDistrict" [nzLabel]="district.name"
+                                        [nzValue]="district.code">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-item>
 
-                    <nz-form-item>
-                        <nz-form-label>Ward Code</nz-form-label>
-                        <nz-form-control>
-                            <input nz-input formControlName="createHospital.wardCode" />
-                        </nz-form-control>
-                    </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7">Ward Code</nz-form-label>
+                                <nz-select style="width: calc(100% - 29.166666667%);" nzShowSearch nzAllowClear
+                                    nzPlaceHolder="Select a ward" formControlName="wardCode">
+                                    <nz-option *ngFor="let ward of listWard" [nzLabel]="ward.name"
+                                        [nzValue]="ward.code">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-item>
 
-                    <nz-form-item>
-                        <nz-form-label>Hospital Address</nz-form-label>
-                        <nz-form-control>
-                            <input nz-input formControlName="createHospital.hospitalDetailAddress" />
-                        </nz-form-control>
-                    </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7">Hospital Address</nz-form-label>
+                                <nz-form-control nzSpan="17">
+                                    <input nz-input formControlName="hospitalDetailAddress" />
+                                </nz-form-control>
+                            </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7">Description</nz-form-label>
+                                <nz-form-control nzSpan="17">
+                                    <textarea nz-input formControlName="hospitalDescription"></textarea>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
 
-                    <nz-form-item>
-                        <nz-form-label>Description</nz-form-label>
-                        <nz-form-control>
-                            <input nz-input formControlName="createHospital.hospitalDescription" />
-                        </nz-form-control>
-                    </nz-form-item>
+                    <div *ngIf="isHiddenInfoUser" nz-col class="gutter-row" [nzSpan]="12">
+                        <div formGroupName="userHospital">
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7" nzRequired>Username</nz-form-label>
+                                <nz-form-control nzSpan="17" [nzErrorTip]="'Please input your username'">
+                                    <input nz-input formControlName="userName" />
+                                </nz-form-control>
+                            </nz-form-item>
 
-                    <nz-form-item>
-                        <nz-form-label nzRequired>Hotline</nz-form-label>
-                        <nz-form-control [nzErrorTip]="'Please input hotline number'">
-                            <input nz-input formControlName="createHospital.hotline" />
-                        </nz-form-control>
-                    </nz-form-item>
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7" nzRequired>Email Address</nz-form-label>
+                                <nz-form-control nzSpan="17" [nzErrorTip]="'Please input a valid email address'">
+                                    <input nz-input formControlName="emailAddress" />
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item>
+                                <nz-form-label nzSpan="7" nzRequired>Password</nz-form-label>
+                                <nz-form-control nzSpan="17" [nzErrorTip]="'Please input your password'">
+                                    <input nz-input type="password" formControlName="password" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
                 </div>
-                <div nz-col class="gutter-row" [nzSpan]="12">
-                    <h6 class="text-center">Create User Hospital</h6>
-                    <nz-form-item>
-                        <nz-form-label nzRequired>Username</nz-form-label>
-                        <nz-form-control [nzErrorTip]="'Please input your username'">
-                            <input nz-input formControlName="userHospital.userName" />
-                        </nz-form-control>
-                    </nz-form-item>
-
-                    <nz-form-item>
-                        <nz-form-label nzRequired>Email Address</nz-form-label>
-                        <nz-form-control [nzErrorTip]="'Please input a valid email address'">
-                            <input nz-input formControlName="userHospital.emailAddress" />
-                        </nz-form-control>
-                    </nz-form-item>
-
-                    <nz-form-item>
-                        <nz-form-label nzRequired>Password</nz-form-label>
-                        <nz-form-control [nzErrorTip]="'Please input your password'">
-                            <input nz-input type="password" formControlName="userHospital.password" />
-                        </nz-form-control>
-                    </nz-form-item>
+                <div class="d-flex justify-content-end">
+                    <button nz-button [disabled]="!form.valid" [nzType]="'primary'" style="margin-right: 10px;">
+                        Submit
+                    </button>
+                    <a href="javascript:void(0)" class="mx-2" nz-button [nzType]="'secondary'" (click)="onCancel()">
+                        Cancel
+                    </a>
                 </div>
-            </div>
-            <button style="display: flex;justify-content: end;" nz-button [nzType]="'primary'" [disabled]="!form.valid">
-                Submit
-            </button>
-        </form>
+            </form>
+        </div>
     </div>
 </div>

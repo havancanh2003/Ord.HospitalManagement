@@ -4,6 +4,8 @@ public static class HospitalManagementPermissions
 {
     public const string GroupName = "HospitalManagement";
 
-    //Add your own permission names. Example:
-    //public const string MyPermission1 = GroupName + ".MyPermission1";
+    public static class Patient
+    {
+        public const string Default = GroupName + ".Patient";
+    }
 }

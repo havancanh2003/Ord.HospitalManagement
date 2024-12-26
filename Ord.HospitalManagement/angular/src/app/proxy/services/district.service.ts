@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import type { DataResult } from '../data-result/models';
 import type { CustomePagedAndSortedResultRequestDistrictDto } from '../dtos/address/model-filter/models';
 import type { CreateUpdateDistrictDto, DistrictDto } from '../dtos/address/models';
-// import type { IFormFile } from '../microsoft/asp-net-core/http/models';
+import type { IFormFile } from '../microsoft/asp-net-core/http/models';
 
 @Injectable({
   providedIn: 'root',

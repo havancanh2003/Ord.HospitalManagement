@@ -8,6 +8,7 @@ export interface ManageInfoHospital {
   wardCode?: string;
   detailAddress?: string;
   adminHospitalName?: string;
+  hospitalDescription?: string;
   hotline?: string;
   userId?: string;
 }

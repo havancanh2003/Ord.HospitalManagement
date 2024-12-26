@@ -36,9 +36,9 @@ namespace Ord.HospitalManagement.DapperRepo
                 );
                     return queryResult;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw;
+                    throw new Exception(ex.Message);
                 }
                 finally
                 {
@@ -66,9 +66,9 @@ namespace Ord.HospitalManagement.DapperRepo
                         return (total, lists);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    throw;
+                    throw new Exception(ex.Message);
                 }
                 finally
                 {

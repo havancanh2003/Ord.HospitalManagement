@@ -10,17 +10,17 @@ namespace Ord.HospitalManagement.DTOs.Hospital
 {
     public class CreateUserHospital
     {
-        [Required(ErrorMessage = "Full Name is required.")]
-        [MaxLength(128, ErrorMessage = "Hospital Name cannot exceed 100 characters.")]
+        [Required(ErrorMessage = "Tên Admin là bắt buộc")]
+        [MaxLength(128, ErrorMessage = "Tên không được quá 100 kí tự")]
         public string UserName { get; set; } = null!;
-        [Required(ErrorMessage = "Email Address is required.")]
-        [EmailAddress(ErrorMessage = "Email Address must be in a valid format.")]
+        [Required(ErrorMessage = "Email Address là bắt buộc.")]
+        [EmailAddress(ErrorMessage = "Email Address phải đúng tiêu chuẩn.")]
         public string EmailAddress { get; set; } = null!;
-        [Required(ErrorMessage = "Password is required.")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
-        [MaxLength(32, ErrorMessage = "Password cannot exceed 32 characters.")]
+        [Required(ErrorMessage = "Password là trường bắt buộc.")]
+        [MinLength(6, ErrorMessage = "Password ít nhất phải có 6 kí tự.")]
+        [MaxLength(32, ErrorMessage = "Password không quá 32 kí tự.")]
         [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$",
-        ErrorMessage = "Password must contain at least one letter, one number, and one special character.")]
+        ErrorMessage = "Password phải có số, kí tự viết hoa và kí tự đặc biệt")]
         public string Password { get; set; } = null!;
     }
 }
