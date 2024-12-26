@@ -9,6 +9,7 @@ using Ord.HospitalManagement.DTOs.Hospital;
 using Ord.HospitalManagement.Entities;
 using Ord.HospitalManagement.Entities.Address;
 using Ord.HospitalManagement.IServices;
+using Ord.HospitalManagement.Permissions;
 using Ord.HospitalManagement.Roles;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.PermissionManagement;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Uow;
 
@@ -35,11 +37,13 @@ namespace Ord.HospitalManagement.TenantAppService
         private readonly IRepository<UserHospital, int> _userHospitalRepository;
         private readonly IdentityUserManager _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IPermissionManager _permissionManager;
         private readonly DapperRepo.DapperRepo _dapper;
 
         public TenantHospitalAppService(
             IUnitOfWorkManager unitOfWorkManager,
-            IdentityUserManager userManager,
+            IPermissionManager permissionManager,
+        IdentityUserManager userManager,
             IGenerateCode generateCode,
             DapperRepo.DapperRepo dapper,
             RoleManager<IdentityRole> roleManager,
@@ -54,6 +58,7 @@ namespace Ord.HospitalManagement.TenantAppService
             _dapper = dapper;
             _roleManager = roleManager;
             _userHospitalRepository = userHospitalRepository;
+            _permissionManager = permissionManager;
         }
 
         public async Task CreateHospitalAsync(CreateTenantHospitalDto input)
@@ -76,7 +81,8 @@ namespace Ord.HospitalManagement.TenantAppService
                                     input.userHospital.UserName,
                                     input.userHospital.EmailAddress, null
                                 );
-                        adminUser.AddRole(role!.Id);
+                        if(role != null)
+                            adminUser.AddRole(role.Id);
 
                         var createUserResult = await _userManager.CreateAsync(adminUser, input.userHospital.Password);
                         if (!createUserResult.Succeeded)
@@ -95,6 +101,7 @@ namespace Ord.HospitalManagement.TenantAppService
                             HospitalId = hospitalEntity.Id
                         };
                         await _userHospitalRepository.InsertAsync(adminHopital);
+                        await _permissionManager.SetForUserAsync(adminUser.Id, HospitalManagementPermissions.Patient.Default, true);
                         await uow.CompleteAsync();
                     }
                     catch

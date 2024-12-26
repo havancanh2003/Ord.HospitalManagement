@@ -25,10 +25,12 @@ namespace Ord.HospitalManagement.Services
     {
         private readonly IGenerateCode _generateCode;
         private readonly IProvinceAppService _provinceAppService;
-        public DistrictAppService(IRepository<District, int> repository, IGenerateCode generateCode, IProvinceAppService provinceAppService) : base(repository)
+        private readonly DapperRepo.DapperRepo _dapper;
+        public DistrictAppService(IRepository<District, int> repository, IGenerateCode generateCode, DapperRepo.DapperRepo dapper, IProvinceAppService provinceAppService) : base(repository)
         {
             _generateCode = generateCode;
             _provinceAppService = provinceAppService;
+            _dapper = dapper;
         }
 
         public async override Task<PagedResultDto<DistrictDto>> GetListAsync(CustomePagedAndSortedResultRequestDistrictDto input)
@@ -98,6 +100,12 @@ namespace Ord.HospitalManagement.Services
                 return null;
             return ObjectMapper.Map<District, DistrictDto>(get);
         }
+        public async Task<List<ModelDistrictCodeProvinCodeMap>> GetAllDistrictCode()
+        {
+            var query = "SELECT Code AS DistrictCode,ProvinceCode FROM District";
+            var list = await _dapper.QueryGetAsync<ModelDistrictCodeProvinCodeMap>(query);
+            return list.ToList();
+        }
 
         public async Task<DataResult<DistrictDto>> ImportExcel(IFormFile formFile)
         {
@@ -115,7 +123,7 @@ namespace Ord.HospitalManagement.Services
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
-                    //ExcelPackage.LicenseContext = LicenseContext.Commercial;
+                    ExcelPackage.LicenseContext = LicenseContext.Commercial;
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                     using (var package = new ExcelPackage(stream))
                     {

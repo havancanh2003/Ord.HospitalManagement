@@ -11,7 +11,6 @@ export const APP_ROUTE_PROVIDER = [
 ];
 
 function configureRoutes(routesService: RoutesService, configStateService: ConfigStateService) {
-  console.log(configStateService.getAll());
   return () => {
     routesService.add([
       {
@@ -46,7 +45,6 @@ function configureRoutes(routesService: RoutesService, configStateService: Confi
         name: '::Menu:Ward',
         parentName: '::Menu:Address',
         layout: eLayoutType.application,
-        requiredPolicy: '',
       },
       //
       {
@@ -61,6 +59,7 @@ function configureRoutes(routesService: RoutesService, configStateService: Confi
         name: '::List:Hospital',
         iconClass: 'fas fa-book',
         parentName: '::Menu:Hospital',
+        requiredPolicy: 'AbpIdentity.Roles',
         layout: eLayoutType.application,
       },
       {
@@ -68,7 +67,7 @@ function configureRoutes(routesService: RoutesService, configStateService: Confi
         name: '::Action:Patient',
         iconClass: 'fas fa-book',
         parentName: '::Menu:Hospital',
-        requiredPolicy: 'Management Hospital',
+        requiredPolicy: 'HospitalManagement.Patient',
         layout: eLayoutType.application,
       },
     ]);

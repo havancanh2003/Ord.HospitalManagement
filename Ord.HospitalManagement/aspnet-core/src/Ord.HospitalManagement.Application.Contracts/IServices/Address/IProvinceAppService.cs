@@ -13,5 +13,6 @@ namespace Ord.HospitalManagement.IServices.Address
         Task<ProvinceDto?> GetProvinceByCode(string code);
         Task<DataResult<ProvinceDto>> ImportExcel(IFormFile formFile);
         Task<List<string>> GetAllProvinceCode();
+
     }
 }

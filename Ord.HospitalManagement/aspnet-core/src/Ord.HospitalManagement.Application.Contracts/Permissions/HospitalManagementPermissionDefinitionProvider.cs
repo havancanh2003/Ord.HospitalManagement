@@ -10,7 +10,7 @@ public class HospitalManagementPermissionDefinitionProvider : PermissionDefiniti
     {
         var myGroup = context.AddGroup(HospitalManagementPermissions.GroupName, L("Permission:HospitalManagement"));
 
-        var booksPermission = myGroup.AddPermission(HospitalManagementPermissions.Patient.Default, L("Permission:HospitalManagement.Patient"));
+        myGroup.AddPermission(HospitalManagementPermissions.Patient.Default, L("Permission:HospitalManagement.Patient"));
         //Define your own permissions here. Example:
         //myGroup.AddPermission(HospitalManagementPermissions.MyPermission1, L("Permission:MyPermission1"));
     }

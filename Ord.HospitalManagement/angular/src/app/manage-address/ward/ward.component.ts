@@ -64,7 +64,7 @@ export class WardComponent implements OnInit {
           code: p.code,
           name: p.name,
         }));
-        this.listProvince = [...this.listProvince, ...data];
+        this.listProvince = [...data];
       }
       console.log(this.listProvince);
     });
@@ -79,7 +79,7 @@ export class WardComponent implements OnInit {
           code: p.code,
           name: p.name,
         }));
-        this.listDistrict = [...this.listDistrict, ...data];
+        this.listDistrict = [...data];
       }
       console.log(this.listDistrict);
     });

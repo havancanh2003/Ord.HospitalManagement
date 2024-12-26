@@ -15,5 +15,6 @@
     {
         Ward = 6,
         Commune = 7,
+        Township = 8
     }
 }

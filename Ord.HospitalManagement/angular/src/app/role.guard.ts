@@ -27,6 +27,8 @@ export class RoleGuard implements CanActivate, CanMatch {
     return false;
   }
   canMatch(route: Route, segments: UrlSegment[]): MaybeAsync<GuardResult> {
+    //option 2
+    //this.permissionService.getGrantedPolicy('AbpIdentity.Roles.Create');
     const currentUser = this.config.getOne('currentUser');
     if (currentUser?.roles.includes('admin')) {
       return true;

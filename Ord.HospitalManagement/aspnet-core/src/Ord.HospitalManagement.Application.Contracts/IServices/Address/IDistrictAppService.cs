@@ -15,5 +15,7 @@ namespace Ord.HospitalManagement.IServices.Address
     {
         Task<DistrictDto?> GetDistrictByCode(string code);
         Task<DataResult<DistrictDto>> ImportExcel(IFormFile formFile);
+        Task<List<ModelDistrictCodeProvinCodeMap>> GetAllDistrictCode();
+
     }
 }
