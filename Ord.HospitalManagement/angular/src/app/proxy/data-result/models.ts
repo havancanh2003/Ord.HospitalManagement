@@ -1,4 +1,3 @@
-
 export interface DataResult<T> {
   isOk: boolean;
   msg?: string;

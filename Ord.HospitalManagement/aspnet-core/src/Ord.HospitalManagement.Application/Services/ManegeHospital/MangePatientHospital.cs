@@ -8,6 +8,7 @@ using Ord.HospitalManagement.DTOs.Hospital;
 using Ord.HospitalManagement.Entities;
 using Ord.HospitalManagement.IServices.Hospital;
 using Ord.HospitalManagement.Roles;
+using Ord.HospitalManagement.Services.Common;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,13 +27,15 @@ namespace Ord.HospitalManagement.Services.ManegeHospital
         private readonly IUserHospitalSerivice _userHospitalSerivice;
         private readonly IGenerateCode _generateCode;
         private readonly DapperRepo.DapperRepo _dapper;
+        private readonly AddressConcatenation _addressConcatenation;
 
-        public MangePatientHospital(IRepository<Patient, int> repository, IGenerateCode generateCode, DapperRepo.DapperRepo dapper, IUserHospitalSerivice userHospitalSerivice)
+        public MangePatientHospital(IRepository<Patient, int> repository, IGenerateCode generateCode, DapperRepo.DapperRepo dapper, AddressConcatenation addressConcatenation, IUserHospitalSerivice userHospitalSerivice)
         {
             _repository = repository;
             _userHospitalSerivice = userHospitalSerivice;
             _generateCode = generateCode;
             _dapper = dapper;
+            _addressConcatenation = addressConcatenation;
         }
         public async Task<PatientDto> CreatePatientAsync(CreateUpdatePatientDto input)
         {
@@ -67,7 +70,22 @@ namespace Ord.HospitalManagement.Services.ManegeHospital
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<PatientDto> GetHospitalAsync(int id)
+        public async Task DeletePatientAsync(int id)
+        {
+            try
+            {
+                var patient = await _repository.GetAsync(id);
+                if (patient == null)
+                    throw new ArgumentNullException("Không tồn tại người bệnh trong hệ thống");
+
+                await _repository.DeleteAsync(patient);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<PatientDto> GetPatientByIdAsync(int id)
         {
             try
             {
@@ -119,6 +137,15 @@ namespace Ord.HospitalManagement.Services.ManegeHospital
                     Offset = offset
                 };
                 var result = await _dapper.QueryMultiGetAsync<PatientDto>(countQuery, parameters);
+                foreach (var patient in result.lists)
+                {
+                    patient.DetailAddress = await _addressConcatenation.DetailAddress(
+                        patient.ProvinceCode,
+                        patient.DistrictCode,
+                        patient.WardCode,
+                        patient.DetailAddress
+                    );
+                }
                 return new PagedResultDto<PatientDto>(result.total, result.lists.ToList());
             }
             catch(Exception ex)

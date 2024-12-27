@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IronXL;
+using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using Ord.HospitalManagement.DataResult;
 using Ord.HospitalManagement.DomainServices;
@@ -11,13 +12,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.ObjectMapping;
 
 namespace Ord.HospitalManagement.Services
 {
@@ -35,22 +33,33 @@ namespace Ord.HospitalManagement.Services
 
         public async override Task<PagedResultDto<DistrictDto>> GetListAsync(CustomePagedAndSortedResultRequestDistrictDto input)
         {
-            var queryable = await Repository.GetQueryableAsync();
+            var countQuery = @"SELECT COUNT(*) FROM District Where 1=1";
+            var baseQuery = @"SELECT Id, Code, Name, LevelDistrict, ProvinceCode 
+                            FROM District Where 1=1";
+            if (!string.IsNullOrEmpty(input.ProvinceCode))
+            {
+                countQuery += " AND ProvinceCode = @ProvinceCode";
+                baseQuery += " AND ProvinceCode = @ProvinceCode";
+            }
+            if (!string.IsNullOrEmpty(input.FilterName))
+            {
+                countQuery += " AND Name LIKE @FilterName";
+                baseQuery += " AND Name LIKE @FilterName";
+            }
 
-            var districts = await AsyncExecuter.ToListAsync(
-                queryable
-                    .WhereIf(!input.ProvinceCode.IsNullOrEmpty(), x => x.ProvinceCode.Contains(input.ProvinceCode))
-                    .WhereIf(!input.FilterName.IsNullOrEmpty(), x => x.Name.Contains(input.FilterName)) // apply filtering
-                    .Skip(input.SkipCount)
-                    .Take(input.MaxResultCount)
-            );
-            //Convert to DTOs
-            var districtDtos = ObjectMapper.Map<List<District>, List<DistrictDto>>(districts);
-            var totalCount = await Repository.GetCountAsync();
-
+            baseQuery += @" LIMIT @PageSize OFFSET @Offset";
+            countQuery += $"; {baseQuery}";
+            var parameters = new
+            {
+                ProvinceCode = input.ProvinceCode,
+                FilterName = $"%{input.FilterName}%",
+                Offset = input.SkipCount,
+                PageSize = input.MaxResultCount,
+            };
+            var result = await _dapper.QueryMultiGetAsync<DistrictDto>(countQuery, parameters);
             return new PagedResultDto<DistrictDto>(
-                totalCount,
-                districtDtos
+                result.total,
+                result.lists.ToList()
             );
         }
         /// <summary>
@@ -113,7 +122,8 @@ namespace Ord.HospitalManagement.Services
             {
                 return DataResult<DistrictDto>.GetResult(false, "File không hợp lệ hoặc rỗng", null, null);
             }
-            if (!Path.GetExtension(formFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            var extension = Path.GetExtension(formFile.FileName).ToLower();
+            if (extension != ".xlsx" && extension != ".xls")
             {
                 return DataResult<DistrictDto>.GetResult(false, "Không hỗ trợ định dạng file", null, null);
             }
@@ -123,9 +133,25 @@ namespace Ord.HospitalManagement.Services
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
-                    ExcelPackage.LicenseContext = LicenseContext.Commercial;
+                    stream.Position = 0;
+
+                    MemoryStream processedStream = new MemoryStream();
+
+                    if (extension == ".xls")
+                    {
+                        var xlsWorkbook = WorkBook.Load(stream);
+                        var tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
+                        xlsWorkbook.SaveAs(tempFilePath);
+                        processedStream = new MemoryStream(File.ReadAllBytes(tempFilePath));
+                        File.Delete(tempFilePath);
+                    }
+                    else
+                    {
+                        stream.CopyTo(processedStream);
+                    }
+                    processedStream.Position = 0;
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    using (var package = new ExcelPackage(stream))
+                    using (var package = new ExcelPackage(processedStream))
                     {
                         var worksheet = package.Workbook.Worksheets[0];
                         var rowCount = worksheet.Dimension.Rows;
@@ -152,6 +178,9 @@ namespace Ord.HospitalManagement.Services
                                         break;
                                     case "thành phố":
                                         level = LevelDistrict.City;
+                                        break;
+                                    case "quận":
+                                        level = LevelDistrict.DistrictCity;
                                         break;
                                     case "thị xã":
                                         level = LevelDistrict.Town;
@@ -182,11 +211,7 @@ namespace Ord.HospitalManagement.Services
 
                 foreach (var item in list)
                 {
-                    if (existingCodes.Any(x => x.Code == item.Code))
-                    {
-                        errorList.Add(item);
-                    }
-                    if (!existingProvinceCodes.Contains(item.ProvinceCode))
+                    if (existingCodes.Any(x => x.Code == item.Code) || !existingProvinceCodes.Contains(item.ProvinceCode))
                     {
                         errorList.Add(item);
                     }

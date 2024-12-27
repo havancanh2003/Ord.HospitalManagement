@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IronXL;
+using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using Ord.HospitalManagement.DataResult;
 using Ord.HospitalManagement.DomainServices;
 using Ord.HospitalManagement.DTOs.Address;
 using Ord.HospitalManagement.DTOs.Address.ModelFilter;
+using Ord.HospitalManagement.DTOs.Hospital;
 using Ord.HospitalManagement.Entities.Address;
 using Ord.HospitalManagement.Enums;
 using Ord.HospitalManagement.IServices.Address;
@@ -11,8 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -25,33 +29,73 @@ namespace Ord.HospitalManagement.Services
         private readonly IGenerateCode _generateCode;
         private readonly IProvinceAppService _provinceAppService;
         private readonly IDistrictAppService _districtAppService;
+        private readonly DapperRepo.DapperRepo _dapper;
 
-        public WardAppService(IRepository<Ward, int> repository, IGenerateCode generateCode, IDistrictAppService districtAppService,IProvinceAppService provinceAppService) : base(repository)
+        public WardAppService(IRepository<Ward, int> repository, IGenerateCode generateCode, DapperRepo.DapperRepo dapper, IDistrictAppService districtAppService,IProvinceAppService provinceAppService) : base(repository)
         {
             _generateCode = generateCode;
             _districtAppService = districtAppService;
             _provinceAppService = provinceAppService;
+            _dapper = dapper;
         }
+        //public async override Task<PagedResultDto<WardDto>> GetListAsync(CustomePagedAndSortedResultRequestWardDto input)
+        //{
+        //    var queryable = await Repository.GetQueryableAsync();
+
+        //    var filteredQuery = queryable
+        //        .WhereIf(!input.ProvinceCode.IsNullOrEmpty(), x => x.ProvinceCode.Contains(input.ProvinceCode))
+        //        .WhereIf(!input.DistrictCode.IsNullOrEmpty(), x => x.DistrictCode.Contains(input.DistrictCode))
+        //        .WhereIf(!input.FilterName.IsNullOrEmpty(), x => x.Name.Contains(input.FilterName));
+
+        //    var totalCount = await AsyncExecuter.CountAsync(filteredQuery);
+
+        //    var wards = await AsyncExecuter.ToListAsync(
+        //        filteredQuery
+        //            .Skip(input.SkipCount)
+        //            .Take(input.MaxResultCount)
+        //    );
+        //    var wardDtos = ObjectMapper.Map<List<Ward>, List<WardDto>>(wards);
+        //    return new PagedResultDto<WardDto>(
+        //        totalCount,
+        //        wardDtos
+        //    );
+        //}
         public async override Task<PagedResultDto<WardDto>> GetListAsync(CustomePagedAndSortedResultRequestWardDto input)
         {
-            var queryable = await Repository.GetQueryableAsync();
+            var countQuery = @"SELECT COUNT(*) FROM Ward Where 1=1";
+            var baseQuery = @"SELECT Id, Code, Name, LevelWard, DistrictCode, ProvinceCode 
+                            FROM Ward Where 1=1";
+            if (!string.IsNullOrEmpty(input.ProvinceCode))
+            {
+                countQuery += " AND ProvinceCode = @ProvinceCode";
+                baseQuery += " AND ProvinceCode = @ProvinceCode";
+            }
 
-            var filteredQuery = queryable
-                .WhereIf(!input.ProvinceCode.IsNullOrEmpty(), x => x.ProvinceCode.Contains(input.ProvinceCode))
-                .WhereIf(!input.DistrictCode.IsNullOrEmpty(), x => x.DistrictCode.Contains(input.DistrictCode))
-                .WhereIf(!input.FilterName.IsNullOrEmpty(), x => x.Name.Contains(input.FilterName));
+            if (!string.IsNullOrEmpty(input.DistrictCode))
+            {
+                countQuery += " AND DistrictCode = @DistrictCode";
+                baseQuery += " AND DistrictCode = @DistrictCode";
+            }
+            if (!string.IsNullOrEmpty(input.FilterName))
+            {
+                countQuery += " AND Name LIKE @FilterName";
+                baseQuery += " AND Name LIKE @FilterName";
+            }
 
-            var totalCount = await AsyncExecuter.CountAsync(filteredQuery);
-
-            var wards = await AsyncExecuter.ToListAsync(
-                filteredQuery
-                    .Skip(input.SkipCount)
-                    .Take(input.MaxResultCount)
-            );
-            var wardDtos = ObjectMapper.Map<List<Ward>, List<WardDto>>(wards);
+            baseQuery += @" LIMIT @PageSize OFFSET @Offset";
+            countQuery += $"; {baseQuery}";
+            var parameters = new
+            {
+                ProvinceCode = input.ProvinceCode,
+                DistrictCode = input.DistrictCode,
+                FilterName = $"%{input.FilterName}%",
+                PageSize = input.MaxResultCount,
+                Offset = input.SkipCount,
+            };
+            var result = await _dapper.QueryMultiGetAsync<WardDto>(countQuery, parameters);
             return new PagedResultDto<WardDto>(
-                totalCount,
-                wardDtos
+                result.total,
+                result.lists.ToList()
             );
         }
         public override async Task<WardDto> CreateAsync(CreateUpdateWardDto input)
@@ -125,7 +169,8 @@ namespace Ord.HospitalManagement.Services
             {
                 return DataResult<WardDto>.GetResult(false, "File không hợp lệ hoặc rỗng", null, null);
             }
-            if (!Path.GetExtension(formFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            var extension = Path.GetExtension(formFile.FileName).ToLower();
+            if (extension != ".xlsx" && extension != ".xls")
             {
                 return DataResult<WardDto>.GetResult(false, "Không hỗ trợ định dạng file", null, null);
             }
@@ -135,9 +180,27 @@ namespace Ord.HospitalManagement.Services
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
+                    stream.Position = 0;
+
+                    MemoryStream processedStream = new MemoryStream();
+
+                    if (extension == ".xls")
+                    {
+                        var xlsWorkbook = WorkBook.Load(stream);
+                        var tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
+                        xlsWorkbook.SaveAs(tempFilePath);
+                        processedStream = new MemoryStream(File.ReadAllBytes(tempFilePath));
+
+                        File.Delete(tempFilePath);
+                    }
+                    else
+                    {
+                        stream.CopyTo(processedStream);
+                    }
+                    processedStream.Position = 0;
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-                    using (var package = new ExcelPackage(stream))
+                    using (var package = new ExcelPackage(processedStream))
                     {
                         var worksheet = package.Workbook.Worksheets[0];
                         var rowCount = worksheet.Dimension.Rows;

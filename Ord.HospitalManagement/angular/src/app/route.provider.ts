@@ -48,7 +48,7 @@ function configureRoutes(routesService: RoutesService, configStateService: Confi
       },
       //
       {
-        path: '/manage-hospital',
+        path: '/',
         name: '::Menu:Hospital',
         iconClass: 'fas fa-book',
         order: 3,

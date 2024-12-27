@@ -22,7 +22,7 @@ namespace Ord.HospitalManagement.Services.ManegeHospital
         {
             var ush = await _repository.FirstOrDefaultAsync(uh => uh.UserId.Equals(currenAdminId));
             if (ush != null) 
-                return ush.HospitalId; ;
+                return ush.HospitalId; 
 
             return null;
         }

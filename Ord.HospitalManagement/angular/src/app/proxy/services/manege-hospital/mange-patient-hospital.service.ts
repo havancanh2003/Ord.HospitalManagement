@@ -19,6 +19,14 @@ export class MangePatientHospitalService {
     { apiName: this.apiName,...config });
   
 
+  deletePatient = (id: number, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, void>({
+      method: 'DELETE',
+      url: `/api/app/mange-patient-hospital/${id}/patient`,
+    },
+    { apiName: this.apiName,...config });
+  
+
   getAllPatientByFilterByPageNumberAndPageSizeAndNameAndCode = (pageNumber: number, pageSize: number, name: string, code: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PagedResultDto<PatientDto>>({
       method: 'GET',
@@ -28,10 +36,10 @@ export class MangePatientHospitalService {
     { apiName: this.apiName,...config });
   
 
-  getHospital = (id: number, config?: Partial<Rest.Config>) =>
+  getPatientById = (id: number, config?: Partial<Rest.Config>) =>
     this.restService.request<any, PatientDto>({
       method: 'GET',
-      url: `/api/app/mange-patient-hospital/${id}/hospital`,
+      url: `/api/app/mange-patient-hospital/${id}/patient-by-id`,
     },
     { apiName: this.apiName,...config });
   

@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HospitalDto } from '@proxy/dtos/hospital';
 import { DistrictService, ProvinceService, WardService } from '@proxy/services';
 import { TenantHospitalService } from '@proxy/tenant-app-service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { TITLE_NOTI, TYPE_NOTI } from 'src/app/helper/enum-const';
 
 @Component({
   selector: 'app-create-update-hospital',
@@ -30,7 +32,8 @@ export class CreateUpdateHospitalComponent implements OnInit {
     private provinceService: ProvinceService,
     private wardService: WardService,
     private activatedRoute: ActivatedRoute,
-    private tenantHospitalService: TenantHospitalService
+    private tenantHospitalService: TenantHospitalService,
+    private notification: NzNotificationService
   ) {
     this.buildForm();
   }
@@ -80,29 +83,49 @@ export class CreateUpdateHospitalComponent implements OnInit {
       }),
     });
   }
-  validateUserHospital(): boolean {
+  validateUserHospital(): { isValid: boolean; errorMessage: string | null } {
     const { userName, emailAddress, password } = this.form.get('userHospital')?.value;
-    if (userName === null || userName === undefined || userName.trim() === '') return false;
-    if (emailAddress === null || emailAddress === undefined || emailAddress.trim() === '')
-      return false;
-    if (password === null || password === undefined || password.trim() === '') return false;
+    if (userName === null || userName === undefined || userName.trim() === '') {
+      return { isValid: false, errorMessage: 'Tên người dùng không được để trống.' };
+    }
+    if (emailAddress === null || emailAddress === undefined || emailAddress.trim() === '') {
+      return { isValid: false, errorMessage: 'Địa chỉ email không được để trống.' };
+    }
+    if (password === null || password === undefined || password.trim() === '') {
+      return { isValid: false, errorMessage: 'Mật khẩu không được để trống.' };
+    }
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
-    if (!passwordRegex.test(password)) return false;
-    return true;
+    if (!passwordRegex.test(password)) {
+      return {
+        isValid: false,
+        errorMessage: 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ, số và ký tự đặc biệt.',
+      };
+    }
+    return { isValid: true, errorMessage: null };
   }
+
   onCancel(): void {
     this.form.reset();
   }
   onSubmit(): void {
+    debugger;
+    console.log(this.form.value);
     if (!this.form.valid) {
       return;
     }
     let req;
     if (this.idHospital) {
-      req = this.wardService.update(this.hospital.id, this.form.get('createHospital')?.value);
+      req = this.tenantHospitalService.updateInfoHospitalByIdAndInput(
+        this.hospital.id,
+        this.form.get('createHospital')?.value
+      );
     } else {
-      if (this.validateUserHospital()) {
-        req = this.wardService.create(this.form.value);
+      const check = this.validateUserHospital();
+      if (check.isValid) {
+        req = this.tenantHospitalService.createHospital(this.form.value);
+      } else {
+        this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, check.errorMessage);
+        return;
       }
     }
     req.subscribe((response: HospitalDto) => {
@@ -133,7 +156,6 @@ export class CreateUpdateHospitalComponent implements OnInit {
         }));
         this.listProvince = [...data];
       }
-      console.log(this.listProvince);
     });
   }
   loadDataDistrict(provinceCode: string) {
@@ -148,7 +170,6 @@ export class CreateUpdateHospitalComponent implements OnInit {
         }));
         this.listDistrict = [...data];
       }
-      console.log(this.listDistrict);
     });
   }
   loadDataWard(districtCode: string) {
@@ -163,7 +184,6 @@ export class CreateUpdateHospitalComponent implements OnInit {
         }));
         this.listWard = [...data];
       }
-      console.log(this.listWard);
     });
   }
   onProvinceChange(provinceCode: string) {

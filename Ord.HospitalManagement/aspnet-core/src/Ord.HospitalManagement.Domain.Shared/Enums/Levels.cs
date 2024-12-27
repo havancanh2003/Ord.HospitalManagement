@@ -9,7 +9,8 @@
     {
         District = 3,
         City = 4,
-        Town = 5
+        Town = 5,
+        DistrictCity = 9
     }
     public enum LevelWard
     {

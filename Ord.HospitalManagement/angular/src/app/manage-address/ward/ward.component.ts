@@ -2,9 +2,12 @@ import { ListService, PagedResultDto } from '@abp/ng.core';
 import { Confirmation, ConfirmationService } from '@abp/ng.theme.shared';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DataResult } from '@proxy/data-result';
 import { WardDto } from '@proxy/dtos/address';
 import { levelWardOptions } from '@proxy/enums';
 import { DistrictService, ProvinceService, WardService } from '@proxy/services';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { TITLE_NOTI, TYPE_NOTI } from 'src/app/helper/enum-const';
 
 @Component({
   selector: 'app-ward',
@@ -24,6 +27,8 @@ export class WardComponent implements OnInit {
   wardSearchName!: string;
   selectedProvinceCode!: string;
   selectedDistrictCode!: string;
+  isModalUploadFileOpen: boolean = false;
+  selectedFile: File | null = null;
 
   constructor(
     public readonly list: ListService,
@@ -31,10 +36,9 @@ export class WardComponent implements OnInit {
     private districtService: DistrictService,
     private provinceService: ProvinceService,
     private fb: FormBuilder,
+    private notification: NzNotificationService,
     private confirmation: ConfirmationService
-  ) {
-    this.list.maxResultCount = 1;
-  }
+  ) {}
   ngOnInit(): void {
     this.loadData();
     this.loadDataProvince();
@@ -50,7 +54,6 @@ export class WardComponent implements OnInit {
 
     this.list.hookToQuery(provinceStreamCreator).subscribe(response => {
       this.ward = response;
-      console.log(this.ward);
     });
   }
 
@@ -66,7 +69,6 @@ export class WardComponent implements OnInit {
         }));
         this.listProvince = [...data];
       }
-      console.log(this.listProvince);
     });
   }
   loadDataDistrict(provinceCode: string) {
@@ -81,16 +83,14 @@ export class WardComponent implements OnInit {
         }));
         this.listDistrict = [...data];
       }
-      console.log(this.listDistrict);
     });
   }
   onChange(newValue) {
-    console.log(1);
-
-    console.log(newValue);
+    this.loadDataDistrict(newValue);
+    this.loadData();
   }
-
   createWard() {
+    this.selectedWard = {} as WardDto;
     this.buildForm();
     this.isModalOpen = true;
   }
@@ -109,10 +109,16 @@ export class WardComponent implements OnInit {
       ? this.wardService.update(this.selectedWard.id, this.form.value)
       : this.wardService.create(this.form.value);
 
-    req.subscribe(() => {
-      this.isModalOpen = false;
-      this.form.reset();
-      this.list.get();
+    req.subscribe({
+      next: () => {
+        this.isModalOpen = false;
+        this.form.reset();
+        this.list.get();
+        this.notification.create(TYPE_NOTI.SUCCESS, TITLE_NOTI, 'Thao tác thành công');
+      },
+      error: error => {
+        this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, error.Messege);
+      },
     });
   }
   delete(id: number) {
@@ -128,6 +134,40 @@ export class WardComponent implements OnInit {
       provinceCode: [this.selectedWard.provinceCode || null, Validators.required],
       districtCode: [this.selectedWard.districtCode || null, Validators.required],
       levelWard: [this.selectedWard.levelWard || null, Validators.required],
+    });
+  }
+
+  onFileChange(files: FileList) {
+    if (files) {
+      this.selectedFile = files.item(0);
+    } else {
+      this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, 'Hãy valid file của bạn');
+    }
+  }
+  uploadFile() {
+    if (!this.selectedFile) {
+      return;
+    }
+    const formData: FormData = new FormData();
+    formData.append('formFile', this.selectedFile, this.selectedFile.name);
+    this.wardService.importExcelWardByFormFile(formData).subscribe({
+      next: (response: DataResult<WardDto>) => {
+        this.isModalUploadFileOpen = false;
+        this.selectedFile = null;
+        if (response.isOk && response.errorData.length == 0) {
+          this.notification.create(TYPE_NOTI.SUCCESS, TITLE_NOTI, response.msg);
+          this.list.get();
+          return;
+        }
+        if (response.errorData) {
+          if (response.isOk) {
+            this.notification.create(TYPE_NOTI.WARNING, TITLE_NOTI, response.msg);
+            this.list.get();
+          } else {
+            this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, response.msg);
+          }
+        }
+      },
     });
   }
 }

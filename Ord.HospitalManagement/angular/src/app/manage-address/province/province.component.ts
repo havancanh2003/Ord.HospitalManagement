@@ -5,6 +5,9 @@ import { ProvinceDto } from '@proxy/dtos/address';
 import { levelProvinceOptions } from '@proxy/enums';
 import { ProvinceService } from '@proxy/services';
 import { ConfirmationService, Confirmation } from '@abp/ng.theme.shared';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { TITLE_NOTI, TYPE_NOTI } from 'src/app/helper/enum-const';
+import { DataResult } from '@proxy/data-result';
 
 @Component({
   selector: 'app-province',
@@ -27,10 +30,9 @@ export class ProvinceComponent implements OnInit {
     public readonly list: ListService,
     private provinceService: ProvinceService,
     private fb: FormBuilder,
+    private notification: NzNotificationService,
     private confirmation: ConfirmationService
-  ) {
-    this.list.maxResultCount = 1;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -51,6 +53,7 @@ export class ProvinceComponent implements OnInit {
     });
   }
   createProvince() {
+    this.selectedProvince = {} as ProvinceDto;
     this.buildForm();
     this.isModalOpen = true;
   }
@@ -70,10 +73,16 @@ export class ProvinceComponent implements OnInit {
       ? this.provinceService.update(this.selectedProvince.id, this.form.value)
       : this.provinceService.create(this.form.value);
 
-    req.subscribe(() => {
-      this.isModalOpen = false;
-      this.form.reset();
-      this.list.get();
+    req.subscribe({
+      next: () => {
+        this.isModalOpen = false;
+        this.form.reset();
+        this.list.get();
+        this.notification.create(TYPE_NOTI.SUCCESS, TITLE_NOTI, 'Thao tác thành công');
+      },
+      error: error => {
+        this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, error.Messege);
+      },
     });
   }
   delete(id: number) {
@@ -88,7 +97,7 @@ export class ProvinceComponent implements OnInit {
     if (files) {
       this.selectedFile = files.item(0);
     } else {
-      alert('Please select a valid Excel file!');
+      this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, 'Hãy valid file của bạn');
     }
   }
   uploadFile() {
@@ -97,10 +106,24 @@ export class ProvinceComponent implements OnInit {
     }
     const formData: FormData = new FormData();
     formData.append('formFile', this.selectedFile, this.selectedFile.name);
-    this.provinceService.importExcelByFormFile(formData).subscribe(response => {
-      console.log(response);
-      this.isModalUploadFileOpen = false;
-      this.list.get();
+    this.provinceService.importExcelByFormFile(formData).subscribe({
+      next: (response: DataResult<ProvinceDto>) => {
+        this.isModalUploadFileOpen = false;
+        this.selectedFile = null;
+        if (response.isOk && response.errorData.length == 0) {
+          this.notification.create(TYPE_NOTI.SUCCESS, TITLE_NOTI, response.msg);
+          this.list.get();
+          return;
+        }
+        if (response.errorData) {
+          if (response.isOk) {
+            this.notification.create(TYPE_NOTI.WARNING, TITLE_NOTI, response.msg);
+            this.list.get();
+          } else {
+            this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, response.msg);
+          }
+        }
+      },
     });
   }
 }

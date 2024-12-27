@@ -3,7 +3,11 @@ import type { PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 import type { DataResult } from '../data-result/models';
 import type { CustomePagedAndSortedResultRequestDistrictDto } from '../dtos/address/model-filter/models';
-import type { CreateUpdateDistrictDto, DistrictDto } from '../dtos/address/models';
+import type {
+  CreateUpdateDistrictDto,
+  DistrictDto,
+  ModelDistrictCodeProvinCodeMap,
+} from '../dtos/address/models';
 import type { IFormFile } from '../microsoft/asp-net-core/http/models';
 
 @Injectable({
@@ -36,6 +40,15 @@ export class DistrictService {
       {
         method: 'GET',
         url: `/api/app/district/${id}`,
+      },
+      { apiName: this.apiName, ...config }
+    );
+
+  getAllDistrictCode = (config?: Partial<Rest.Config>) =>
+    this.restService.request<any, ModelDistrictCodeProvinCodeMap[]>(
+      {
+        method: 'GET',
+        url: '/api/app/district/district-code',
       },
       { apiName: this.apiName, ...config }
     );

@@ -23,6 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="EPPlus" Version="7.5.2" />
+    <PackageReference Include="IronXL.Excel" Version="2024.11.16" />
     <PackageReference Include="Volo.Abp.Account.Application" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.Dapper" Version="8.3.0" />
     <PackageReference Include="Volo.Abp.Identity.Application" Version="8.3.0" />

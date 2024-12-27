@@ -873,6 +873,120 @@
       "rootPath": "app",
       "remoteServiceName": "Default",
       "controllers": {
+        "Ord.HospitalManagement.Services.Common.AddressConcatenation": {
+          "controllerName": "AddressConcatenation",
+          "controllerGroupName": "AddressConcatenation",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "Ord.HospitalManagement.Services.Common.AddressConcatenation",
+          "interfaces": [
+            {
+              "type": "Volo.Abp.DependencyInjection.IScopedDependency",
+              "name": "IScopedDependency",
+              "methods": []
+            }
+          ],
+          "actions": {
+            "DetailAddressByPCodeAndDCodeAndWCodeAndDetail": {
+              "uniqueName": "DetailAddressByPCodeAndDCodeAndWCodeAndDetail",
+              "name": "DetailAddress",
+              "httpMethod": "POST",
+              "url": "api/app/address-concatenation/detail-address",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "pCode",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "dCode",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "wCode",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "detail",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "pCode",
+                  "name": "pCode",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "dCode",
+                  "name": "dCode",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "wCode",
+                  "name": "wCode",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "detail",
+                  "name": "detail",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.String",
+                "typeSimple": "string"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.Services.Common.AddressConcatenation"
+            }
+          }
+        },
         "Ord.HospitalManagement.Services.DistrictAppService": {
           "controllerName": "District",
           "controllerGroupName": "District",
@@ -917,6 +1031,14 @@
                   "returnValue": {
                     "type": "Ord.HospitalManagement.DataResult.DataResult<Ord.HospitalManagement.DTOs.Address.DistrictDto>",
                     "typeSimple": "Ord.HospitalManagement.DataResult.DataResult<Ord.HospitalManagement.DTOs.Address.DistrictDto>"
+                  }
+                },
+                {
+                  "name": "GetAllDistrictCode",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<Ord.HospitalManagement.DTOs.Address.ModelDistrictCodeProvinCodeMap>",
+                    "typeSimple": "[Ord.HospitalManagement.DTOs.Address.ModelDistrictCodeProvinCodeMap]"
                   }
                 },
                 {
@@ -1232,6 +1354,21 @@
               "allowAnonymous": null,
               "implementFrom": "Ord.HospitalManagement.IServices.Address.IDistrictAppService"
             },
+            "GetAllDistrictCode": {
+              "uniqueName": "GetAllDistrictCode",
+              "name": "GetAllDistrictCode",
+              "httpMethod": "GET",
+              "url": "api/app/district/district-code",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<Ord.HospitalManagement.DTOs.Address.ModelDistrictCodeProvinCodeMap>",
+                "typeSimple": "[Ord.HospitalManagement.DTOs.Address.ModelDistrictCodeProvinCodeMap]"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.Address.IDistrictAppService"
+            },
             "ImportExcelByFormFile": {
               "uniqueName": "ImportExcelByFormFile",
               "name": "ImportExcel",
@@ -1538,11 +1675,48 @@
               "allowAnonymous": false,
               "implementFrom": "Ord.HospitalManagement.IServices.Hospital.IMangePatientHospital"
             },
-            "GetHospitalAsyncById": {
-              "uniqueName": "GetHospitalAsyncById",
-              "name": "GetHospitalAsync",
+            "DeletePatientAsyncById": {
+              "uniqueName": "DeletePatientAsyncById",
+              "name": "DeletePatientAsync",
+              "httpMethod": "DELETE",
+              "url": "api/app/mange-patient-hospital/{id}/patient",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "Ord.HospitalManagement.Services.ManegeHospital.MangePatientHospital"
+            },
+            "GetPatientByIdAsyncById": {
+              "uniqueName": "GetPatientByIdAsyncById",
+              "name": "GetPatientByIdAsync",
               "httpMethod": "GET",
-              "url": "api/app/mange-patient-hospital/{id}/hospital",
+              "url": "api/app/mange-patient-hospital/{id}/patient-by-id",
               "supportedVersions": [],
               "parametersOnMethod": [
                 {
@@ -2247,6 +2421,23 @@
               "name": "IWardAppService",
               "methods": [
                 {
+                  "name": "ImportExcelWard",
+                  "parametersOnMethod": [
+                    {
+                      "name": "formFile",
+                      "typeAsString": "Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features",
+                      "type": "Microsoft.AspNetCore.Http.IFormFile",
+                      "typeSimple": "Microsoft.AspNetCore.Http.IFormFile",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Ord.HospitalManagement.DataResult.DataResult<Ord.HospitalManagement.DTOs.Address.WardDto>",
+                    "typeSimple": "Ord.HospitalManagement.DataResult.DataResult<Ord.HospitalManagement.DTOs.Address.WardDto>"
+                  }
+                },
+                {
                   "name": "GetAsync",
                   "parametersOnMethod": [
                     {
@@ -2534,6 +2725,43 @@
               "allowAnonymous": null,
               "implementFrom": "Volo.Abp.Application.Services.IUpdateAppService<Ord.HospitalManagement.DTOs.Address.WardDto,System.Int32,Ord.HospitalManagement.DTOs.Address.CreateUpdateWardDto>"
             },
+            "ImportExcelWardByFormFile": {
+              "uniqueName": "ImportExcelWardByFormFile",
+              "name": "ImportExcelWard",
+              "httpMethod": "POST",
+              "url": "api/app/ward/import-excel-ward",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "formFile",
+                  "typeAsString": "Microsoft.AspNetCore.Http.IFormFile, Microsoft.AspNetCore.Http.Features",
+                  "type": "Microsoft.AspNetCore.Http.IFormFile",
+                  "typeSimple": "Microsoft.AspNetCore.Http.IFormFile",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "formFile",
+                  "name": "formFile",
+                  "jsonName": null,
+                  "type": "Microsoft.AspNetCore.Http.IFormFile",
+                  "typeSimple": "Microsoft.AspNetCore.Http.IFormFile",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "FormFile",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "Ord.HospitalManagement.DataResult.DataResult<Ord.HospitalManagement.DTOs.Address.WardDto>",
+                "typeSimple": "Ord.HospitalManagement.DataResult.DataResult<Ord.HospitalManagement.DTOs.Address.WardDto>"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Ord.HospitalManagement.IServices.Address.IWardAppService"
+            },
             "DeleteAsyncById": {
               "uniqueName": "DeleteAsyncById",
               "name": "DeleteAsync",
@@ -2727,7 +2955,7 @@
                 "type": "System.Void",
                 "typeSimple": "System.Void"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": null,
               "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
             },
             "GetInfoHospitalsByPageNumberAndPageSize": {
@@ -2784,7 +3012,7 @@
                 "type": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>",
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Ord.HospitalManagement.DTOs.ManageInfoHospital>"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": null,
               "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
             },
             "GetHospitalAsyncById": {
@@ -2821,7 +3049,7 @@
                 "type": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto",
                 "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": null,
               "implementFrom": "Ord.HospitalManagement.TenantAppService.TenantHospitalAppService"
             },
             "UpdateInfoHospitalByIdAndInput": {
@@ -2878,7 +3106,7 @@
                 "type": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto",
                 "typeSimple": "Ord.HospitalManagement.DTOs.Hospital.HospitalDto"
               },
-              "allowAnonymous": false,
+              "allowAnonymous": null,
               "implementFrom": "Ord.HospitalManagement.IServices.ITenantHospitalAppService"
             }
           }
@@ -5872,6 +6100,39 @@
         }
       ]
     },
+    "Ord.HospitalManagement.DTOs.Address.ModelDistrictCodeProvinCodeMap": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DistrictCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ProvinceCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "Ord.HospitalManagement.DTOs.Address.ModelFilter.CustomePagedAndSortedResultRequestDistrictDto": {
       "baseType": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
       "isEnum": false,
@@ -6747,11 +7008,13 @@
       "isEnum": true,
       "enumNames": [
         "Ward",
-        "Commune"
+        "Commune",
+        "Township"
       ],
       "enumValues": [
         6,
-        7
+        7,
+        8
       ],
       "genericArguments": null,
       "properties": null

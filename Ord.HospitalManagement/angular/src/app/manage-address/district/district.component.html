@@ -29,7 +29,7 @@
                     [(ngModel)]="districtSearchName" />
             </div>
             <div class="col col-md-4">
-                <select class="form-control" [(ngModel)]="selectedProvinceCode">
+                <select class="form-control" (ngModelChange)="onChange($event)" [(ngModel)]="selectedProvinceCode">
                     <option [ngValue]="undefined">Select a level province</option>
                     <option [ngValue]="p.code" *ngFor="let p of listProvince">
                         {{ p.name }}
@@ -135,8 +135,13 @@
         <h3>{{ '::UploadFile' | abpLocalization }}</h3>
     </ng-template>
     <ng-template #abpBody>
+        <div>
+            <p>Hãy chắc chắn rằng File của bạn đã tuân theo định dạng sau <a target="_self"
+                    href="../../../assets/files/district_template.xlsx" download="district_template.xlsx">File
+                    Upload</a></p>
+        </div>
         <div class="col-md-6">
-            <input type="file" (change)="onFileChange($event.target.files)" accept=".xls,.xlsx" class="form-control" />
+            <input type="file" (change)="onFileChange($event.target.files)" accept=".xlsx" class="form-control" />
         </div>
     </ng-template>
     <ng-template #abpFooter>

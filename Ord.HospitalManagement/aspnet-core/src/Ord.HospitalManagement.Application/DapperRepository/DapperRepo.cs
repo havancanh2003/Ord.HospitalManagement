@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories.Dapper;
 using Volo.Abp.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Ord.HospitalManagement.DapperRepo
 {
@@ -20,74 +21,42 @@ namespace Ord.HospitalManagement.DapperRepo
 
         public async Task<IEnumerable<T>> QueryGetAsync<T>(string sql, object? parameters = null)
         {
-            using (var connection = await GetDbConnectionAsync())
-            {
-                var transaction = await GetDbTransactionAsync();
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
-                try
-                {
-                    var queryResult = await connection.QueryAsync<T>(
+            var connection = await GetDbConnectionAsync();
+            var transaction = await GetDbTransactionAsync();
+            var queryResult = await connection.QueryAsync<T>(
                     sql,
                     param: parameters,
                     transaction: transaction
                 );
-                    return queryResult;
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-                finally
-                {
-                    transaction?.Dispose();
-                    connection.Close();
-                }
-            }
+            return queryResult;
         }
         public async Task<(int total, IEnumerable<T> lists)> QueryMultiGetAsync<T>(string sql, object? parameters = null)
         {
-            using (var connection = await GetDbConnectionAsync())
+            var connection = await GetDbConnectionAsync();
+            var transaction = await GetDbTransactionAsync(); 
+            try
             {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                }
-                var transaction = await GetDbTransactionAsync(); // Lấy giao dịch hiện tại (nếu có)
-                try
-                {
-                    using (var multi = await connection.QueryMultipleAsync(sql, parameters, transaction))
-                    {
-                        var total = await multi.ReadSingleAsync<int>();
-                        var lists = await multi.ReadAsync<T>();
-
-                        return (total, lists);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-                finally
-                {
-                    transaction?.Dispose();
-                    connection.Close();
-                }
+                var multi = await connection.QueryMultipleAsync(sql, parameters, transaction);
+                var total = await multi.ReadSingleAsync<int>();
+                var lists = await multi.ReadAsync<T>();
+                return (total, lists);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
-        //public async Task<T> QuerySingleAsync<T>(string sql, object? parameters = null)
-        //{
-        //    var connection = await GetDbConnectionAsync();
-        //    var transaction = await GetDbTransactionAsync();
-        //    var queryResult = await connection.QuerySingleAsync<T>(
-        //       sql,
-        //       param: parameters,
-        //       transaction: transaction
-        //       );
-        //    return queryResult;
-        //}
+        public async Task<T> QuerySingleAsync<T>(string sql, object? parameters = null)
+        {
+            var connection = await GetDbConnectionAsync();
+            var transaction = await GetDbTransactionAsync();
+            var queryResult = await connection.QuerySingleOrDefaultAsync<T>(
+               sql,
+               param: parameters,
+               transaction: transaction
+               );
+            return queryResult;
+        }
     }
 }

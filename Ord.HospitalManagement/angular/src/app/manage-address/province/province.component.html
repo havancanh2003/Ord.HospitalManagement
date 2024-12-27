@@ -104,6 +104,10 @@
     <h3>{{ '::UploadFile' | abpLocalization }}</h3>
   </ng-template>
   <ng-template #abpBody>
+    <div>
+      <p>Hãy chắc chắn rằng File của bạn đã tuân theo định dạng sau <a target="_self"
+          href="../../../assets/files/province_temp.xlsx" download="province_temp.xlsx">File Upload</a></p>
+    </div>
     <div class="col-md-6">
       <input type="file" (change)="onFileChange($event.target.files)" accept=".xls,.xlsx" class="form-control" />
     </div>

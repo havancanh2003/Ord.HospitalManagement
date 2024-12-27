@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IronXL;
+using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using Ord.HospitalManagement.DataResult;
 using Ord.HospitalManagement.DomainServices;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -36,39 +38,74 @@ namespace Ord.HospitalManagement.Services
 
         public async override Task<PagedResultDto<ProvinceDto>> GetListAsync(CustomePagedAndSortedResultRequestProvinceDto input)
         {
-            var a = _currentUser.Id;
-            var queryable = await Repository.GetQueryableAsync();
-            var provinces = await AsyncExecuter.ToListAsync(
-                queryable
-                    .WhereIf(!input.FilterName.IsNullOrEmpty(), x => x.Name.Contains(input.FilterName)) // apply filtering
-                    .Skip(input.SkipCount)
-                    .Take(input.MaxResultCount)
-            );
-            //Convert to DTOs
-            var provinceDtos = ObjectMapper.Map<List<Province>, List<ProvinceDto>>(provinces);
-            var totalCount = await Repository.GetCountAsync();
+            //var a = _currentUser.Id;
+            //var queryable = await Repository.GetQueryableAsync();
+            //var provinces = await AsyncExecuter.ToListAsync(
+            //    queryable
+            //        .WhereIf(!input.FilterName.IsNullOrEmpty(), x => x.Name.Contains(input.FilterName)) // apply filtering
+            //        .Skip(input.SkipCount)
+            //        .Take(input.MaxResultCount)
+            //);
+            ////Convert to DTOs
+            //var provinceDtos = ObjectMapper.Map<List<Province>, List<ProvinceDto>>(provinces);
+            //var totalCount = await Repository.GetCountAsync();
 
+            //return new PagedResultDto<ProvinceDto>(
+            //    totalCount,
+            //    provinceDtos
+            //);
+            var countQuery = @"SELECT COUNT(*) FROM Province Where 1=1";
+            var baseQuery = @"SELECT Id, Code, Name, LevelProvince
+                            FROM Province Where 1=1";
+            if (!string.IsNullOrEmpty(input.FilterName))
+            {
+                countQuery += " AND Name LIKE @FilterName";
+                baseQuery += " AND Name LIKE @FilterName";
+            }
+
+            baseQuery += @" LIMIT @PageSize OFFSET @Offset";
+            countQuery += $"; {baseQuery}";
+            var parameters = new
+            {
+                FilterName = $"%{input.FilterName}%",
+                Offset = input.SkipCount,
+                PageSize = input.MaxResultCount,
+            };
+            var result = await _dapper.QueryMultiGetAsync<ProvinceDto>(countQuery, parameters);
             return new PagedResultDto<ProvinceDto>(
-                totalCount,
-                provinceDtos
+                result.total,
+                result.lists.ToList()
             );
         }
 
         public override async Task<ProvinceDto> CreateAsync(CreateUpdateProvinceDto input)
         {
-            var province = ObjectMapper.Map<CreateUpdateProvinceDto, Province>(input);
-            province.Code = _generateCode.AutoGenerateCode(PrefixGencode.PrefixGencode.PROV);
+            try
+            {
+                var province = ObjectMapper.Map<CreateUpdateProvinceDto, Province>(input);
+                province.Code = _generateCode.AutoGenerateCode(PrefixGencode.PrefixGencode.PROV);
 
-            await Repository.InsertAsync(province);
-            return ObjectMapper.Map<Province, ProvinceDto>(province);
+                await Repository.InsertAsync(province);
+                return ObjectMapper.Map<Province, ProvinceDto>(province);
+            }
+            catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }
         }
         public override async Task<ProvinceDto> UpdateAsync(int id, CreateUpdateProvinceDto input)
         {
-            var existingProvince = await Repository.GetAsync(id);
-            ObjectMapper.Map(input, existingProvince);
-            await Repository.UpdateAsync(existingProvince);
+            try
+            {
+                var existingProvince = await Repository.GetAsync(id);
+                ObjectMapper.Map(input, existingProvince);
+                await Repository.UpdateAsync(existingProvince);
 
-            return ObjectMapper.Map<Province, ProvinceDto>(existingProvince);
+                return ObjectMapper.Map<Province, ProvinceDto>(existingProvince);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<ProvinceDto?> GetProvinceByCode(string code)
@@ -80,14 +117,14 @@ namespace Ord.HospitalManagement.Services
         }
         public async Task<DataResult<ProvinceDto>> ImportExcel(IFormFile formFile)
         {
-            
             if (formFile == null || formFile.Length <= 0)
             {
                 return DataResult<ProvinceDto>.GetResult(false, "File không hợp lệ hoặc rỗng",null,null);
             }
-            if (!Path.GetExtension(formFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+            var extension = Path.GetExtension(formFile.FileName).ToLower();
+            if (extension != ".xlsx" && extension != ".xls")
             {
-                return DataResult<ProvinceDto>.GetResult(false, "Không hỗ trợ định dạng file", null,null);
+                return DataResult<ProvinceDto>.GetResult(false, "Không hỗ trợ định dạng file", null, null);
             }
             var list = new List<ProvinceDto>();
             try
@@ -95,9 +132,26 @@ namespace Ord.HospitalManagement.Services
                 using (var stream = new MemoryStream())
                 {
                     await formFile.CopyToAsync(stream);
-                    //ExcelPackage.LicenseContext = LicenseContext.Commercial;
+                    stream.Position = 0;
+
+                    MemoryStream processedStream = new MemoryStream();
+
+                    if (extension == ".xls")
+                    {
+                        var xlsWorkbook = WorkBook.Load(stream);
+                        var tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".xlsx");
+                        xlsWorkbook.SaveAs(tempFilePath);
+                        processedStream = new MemoryStream(File.ReadAllBytes(tempFilePath));
+
+                        File.Delete(tempFilePath);
+                    }
+                    else
+                    {
+                        stream.CopyTo(processedStream);
+                    }
+                    processedStream.Position = 0;
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    using (var package = new ExcelPackage(stream))
+                    using (var package = new ExcelPackage(processedStream))
                     {
                         var worksheet = package.Workbook.Worksheets[0];
                         var rowCount = worksheet.Dimension.Rows;

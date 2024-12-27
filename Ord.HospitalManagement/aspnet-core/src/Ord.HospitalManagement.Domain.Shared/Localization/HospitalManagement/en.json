@@ -25,6 +25,8 @@
     "Enum:LevelDistrict.5": "Town",
     "Enum:LevelWard.6": "Ward",
     "Enum:LevelWard.7": "Commune",
+    "Enum:LevelWard.8": "Township",
+    "Enum:LevelDistrict.9": "DistrictCity",
     "Permission:HospitalManagement": "Hospital Store",
     "Permission:HospitalManagement.Patient": "Management Hospital"
   }

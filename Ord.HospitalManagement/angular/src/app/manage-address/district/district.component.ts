@@ -2,9 +2,12 @@ import { ListService, PagedResultDto } from '@abp/ng.core';
 import { Confirmation, ConfirmationService } from '@abp/ng.theme.shared';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DataResult } from '@proxy/data-result';
 import { DistrictDto } from '@proxy/dtos/address';
 import { levelDistrictOptions } from '@proxy/enums';
 import { DistrictService, ProvinceService } from '@proxy/services';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { TITLE_NOTI, TYPE_NOTI } from 'src/app/helper/enum-const';
 
 @Component({
   selector: 'app-district',
@@ -30,10 +33,9 @@ export class DistrictComponent implements OnInit {
     private districtService: DistrictService,
     private provinceService: ProvinceService,
     private fb: FormBuilder,
+    private notification: NzNotificationService,
     private confirmation: ConfirmationService
-  ) {
-    this.list.maxResultCount = 1;
-  }
+  ) {}
   ngOnInit(): void {
     this.loadData();
     this.loadDataProvince();
@@ -64,11 +66,15 @@ export class DistrictComponent implements OnInit {
         }));
         this.listProvince = [...data];
       }
-      console.log(this.listProvince);
     });
   }
-
+  onChange(newValue) {
+    this.selectedProvinceCode = newValue;
+    console.log(newValue);
+    this.loadData();
+  }
   createDistrict() {
+    this.selectedDistrict = {} as DistrictDto;
     this.buildForm();
     this.isModalOpen = true;
   }
@@ -87,10 +93,16 @@ export class DistrictComponent implements OnInit {
       ? this.districtService.update(this.selectedDistrict.id, this.form.value)
       : this.districtService.create(this.form.value);
 
-    req.subscribe(() => {
-      this.isModalOpen = false;
-      this.form.reset();
-      this.list.get();
+    req.subscribe({
+      next: () => {
+        this.isModalOpen = false;
+        this.form.reset();
+        this.list.get();
+        this.notification.create(TYPE_NOTI.SUCCESS, TITLE_NOTI, 'Thao tác thành công');
+      },
+      error: error => {
+        this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, error.Messege);
+      },
     });
   }
   delete(id: number) {
@@ -121,10 +133,24 @@ export class DistrictComponent implements OnInit {
     }
     const formData: FormData = new FormData();
     formData.append('formFile', this.selectedFile, this.selectedFile.name);
-    this.districtService.importExcelByFormFile(formData).subscribe(response => {
-      console.log(response);
-      this.isModalUploadFileOpen = false;
-      this.list.get();
+    this.districtService.importExcelByFormFile(formData).subscribe({
+      next: (response: DataResult<DistrictDto>) => {
+        this.isModalUploadFileOpen = false;
+        this.selectedFile = null;
+        if (response.isOk && response.errorData.length == 0) {
+          this.notification.create(TYPE_NOTI.SUCCESS, TITLE_NOTI, response.msg);
+          this.list.get();
+          return;
+        }
+        if (response.errorData) {
+          if (response.isOk) {
+            this.notification.create(TYPE_NOTI.WARNING, TITLE_NOTI, response.msg);
+            this.list.get();
+          } else {
+            this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, response.msg);
+          }
+        }
+      },
     });
   }
 }

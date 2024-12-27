@@ -1,10 +1,11 @@
 import { ListService, PagedResultDto } from '@abp/ng.core';
-import { ConfirmationService } from '@abp/ng.theme.shared';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PatientDto } from '@proxy/dtos/hospital';
 import { DistrictService, ProvinceService, WardService } from '@proxy/services';
 import { MangePatientHospitalService } from '@proxy/services/manege-hospital';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { TITLE_NOTI, TYPE_NOTI } from 'src/app/helper/enum-const';
 
 @Component({
   selector: 'app-manage-patient',
@@ -28,7 +29,7 @@ export class ManagePatientComponent implements OnInit {
     public readonly list: ListService,
     private mangePatientHospitalService: MangePatientHospitalService,
     private fb: FormBuilder,
-    private confirmation: ConfirmationService,
+    private notification: NzNotificationService,
     private districtService: DistrictService,
     private provinceService: ProvinceService,
     private wardService: WardService
@@ -55,13 +56,20 @@ export class ManagePatientComponent implements OnInit {
   buildForm(): void {
     this.form = this.fb.group({
       fullname: [this.patientSelected.fullname || '', [Validators.required]],
-      provinceCode: [this.patientSelected.provinceCode || ''],
-      districtCode: [this.patientSelected.districtCode || ''],
-      wardCode: [this.patientSelected.wardCode || ''],
+      provinceCode: [this.patientSelected.provinceCode || null],
+      districtCode: [this.patientSelected.districtCode || null],
+      wardCode: [this.patientSelected.wardCode || null],
       detailAddress: [this.patientSelected.detailAddress || ''],
       birthday: [this.patientSelected.birthday || ''],
       medicalHistory: [this.patientSelected.medicalHistory || ''],
     });
+    this.loadDataProvince();
+    if (this.patientSelected.districtCode) {
+      this.loadDataDistrict(this.patientSelected.provinceCode);
+    }
+    if (this.patientSelected.wardCode) {
+      this.loadDataWard(this.patientSelected.districtCode);
+    }
   }
   onPageChange(page: number): void {
     this.pageNumber = page;
@@ -69,13 +77,14 @@ export class ManagePatientComponent implements OnInit {
   }
   createUpdate(id?: number) {
     if (id) {
-      this.mangePatientHospitalService.getHospital(id).subscribe(p => {
+      this.mangePatientHospitalService.getPatientById(id).subscribe(p => {
         this.patientSelected = p;
         this.buildForm();
         this.isVisible = true;
       });
       return;
     }
+    this.patientSelected = {} as PatientDto;
     this.buildForm();
     this.isVisible = true;
   }
@@ -88,15 +97,20 @@ export class ManagePatientComponent implements OnInit {
       ? this.mangePatientHospitalService.updatePatient(this.patientSelected.id, this.form.value)
       : this.mangePatientHospitalService.createPatient(this.form.value);
 
-    req.subscribe(() => {
-      this.isVisible = false;
-      this.form.reset();
-      this.list.get();
+    req.subscribe({
+      next: () => {
+        this.isVisible = false;
+        this.form.reset();
+        this.list.get();
+        this.notification.create(TYPE_NOTI.SUCCESS, TITLE_NOTI, 'Thao tác thành công');
+      },
+      error: error => {
+        this.notification.create(TYPE_NOTI.ERROR, TITLE_NOTI, error.Messege);
+      },
     });
   }
 
   handleCancel(): void {
-    this.form.reset();
     this.isVisible = false;
   }
   loadDataProvince() {
@@ -111,7 +125,6 @@ export class ManagePatientComponent implements OnInit {
         }));
         this.listProvince = [...data];
       }
-      console.log(this.listProvince);
     });
   }
   loadDataDistrict(provinceCode: string) {
@@ -126,7 +139,6 @@ export class ManagePatientComponent implements OnInit {
         }));
         this.listDistrict = [...data];
       }
-      console.log(this.listDistrict);
     });
   }
   loadDataWard(districtCode: string) {
@@ -141,7 +153,6 @@ export class ManagePatientComponent implements OnInit {
         }));
         this.listWard = [...data];
       }
-      console.log(this.listWard);
     });
   }
   onProvinceChange(provinceCode: string) {

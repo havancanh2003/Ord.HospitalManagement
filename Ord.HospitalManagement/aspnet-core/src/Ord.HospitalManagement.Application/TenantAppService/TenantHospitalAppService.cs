@@ -11,6 +11,7 @@ using Ord.HospitalManagement.Entities.Address;
 using Ord.HospitalManagement.IServices;
 using Ord.HospitalManagement.Permissions;
 using Ord.HospitalManagement.Roles;
+using Ord.HospitalManagement.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ using Volo.Abp.Uow;
 
 namespace Ord.HospitalManagement.TenantAppService
 {
-    [Authorize]
+    //[Authorize]
     public class TenantHospitalAppService : ApplicationService, ITenantHospitalAppService
     {
         private readonly IUnitOfWorkManager _unitOfWorkManager;
@@ -39,9 +40,11 @@ namespace Ord.HospitalManagement.TenantAppService
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IPermissionManager _permissionManager;
         private readonly DapperRepo.DapperRepo _dapper;
+        private readonly AddressConcatenation _addressConcatenation;
 
         public TenantHospitalAppService(
-            IUnitOfWorkManager unitOfWorkManager,
+             AddressConcatenation addressConcatenation,
+        IUnitOfWorkManager unitOfWorkManager,
             IPermissionManager permissionManager,
         IdentityUserManager userManager,
             IGenerateCode generateCode,
@@ -59,6 +62,7 @@ namespace Ord.HospitalManagement.TenantAppService
             _roleManager = roleManager;
             _userHospitalRepository = userHospitalRepository;
             _permissionManager = permissionManager;
+            _addressConcatenation = addressConcatenation;
         }
 
         public async Task CreateHospitalAsync(CreateTenantHospitalDto input)
@@ -130,16 +134,16 @@ namespace Ord.HospitalManagement.TenantAppService
                         SELECT COUNT(*) FROM Hospital;
                         SELECT 
                             uh.HospitalId,
+                            uh.UserId,
                             h.HospitalName,
                             h.HospitalDescription,
                             h.Code AS HospitalCode,
                             h.ProvinceCode,
                             h.DistrictCode,
                             h.WardCode,
-                            h.HospitalDetailAddress,
+                            h.HospitalDetailAddress AS DetailAddress,
                             u.UserName AS AdminHospitalName,
-                            h.Hotline,
-                            uh.UserId
+                            h.Hotline
                         FROM UserHospital uh
                         INNER JOIN Hospital h ON uh.HospitalId = h.Id
                         INNER JOIN AbpUsers u ON u.Id = uh.UserId
@@ -147,7 +151,15 @@ namespace Ord.HospitalManagement.TenantAppService
                         {limitClause}";
 
                 var result = await _dapper.QueryMultiGetAsync<ManageInfoHospital>(query);
-
+                foreach (var hospital in result.lists)
+                {
+                    hospital.DetailAddress = await _addressConcatenation.DetailAddress(
+                        hospital.ProvinceCode,
+                        hospital.DistrictCode,
+                        hospital.WardCode,
+                        hospital.DetailAddress
+                    );
+                }
                 return new PagedResultDto<ManageInfoHospital>(
                     result.total,
                     result.lists.ToList()

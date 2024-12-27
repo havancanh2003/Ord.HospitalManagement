@@ -28,6 +28,11 @@ export interface DistrictDto extends AuditedEntityDto<number> {
   levelDistrict: LevelDistrict;
 }
 
+export interface ModelDistrictCodeProvinCodeMap {
+  districtCode?: string;
+  provinceCode?: string;
+}
+
 export interface ProvinceDto extends AuditedEntityDto<number> {
   code?: string;
   name?: string;

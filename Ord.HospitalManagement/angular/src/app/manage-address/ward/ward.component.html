@@ -9,6 +9,11 @@
 
             <div class="text-end col col-md-6">
                 <div class="text-lg-end">
+                    <button id="create" class="btn btn-primary mx-2" type="button"
+                        (click)="isModalUploadFileOpen = true">
+                        <i class="fa fa-plus me-1"></i>
+                        <span>{{ '::UploadFile' | abpLocalization }}</span>
+                    </button>
                     <button id="create" class="btn btn-primary" type="button" (click)="createWard()">
                         <i class="fa fa-plus me-1"></i>
                         <span>{{ '::NewWard' | abpLocalization }}</span>
@@ -24,8 +29,7 @@
                     [(ngModel)]="wardSearchName" />
             </div>
             <div class="col col-md-4">
-                <select class="form-control" (ngModelChange)="onChange($event.target.value)"
-                    [(ngModel)]="selectedProvinceCode">
+                <select class="form-control" (ngModelChange)="onChange($event)" [(ngModel)]="selectedProvinceCode">
                     <option [ngValue]="undefined">Select province</option>
                     <option [ngValue]="p.code" *ngFor="let p of listProvince">
                         {{ p.name }}
@@ -33,7 +37,7 @@
                 </select>
             </div>
             <div class="col col-md-4">
-                <select class="form-control" [(ngModel)]="selectedDistrictCode">
+                <select class="form-control" (ngModelChange)="loadData()" [(ngModel)]="selectedDistrictCode">
                     <option [ngValue]="undefined">Select district</option>
                     <option [ngValue]="p.code" *ngFor="let p of listDistrict">
                         {{ p.name }}
@@ -104,8 +108,8 @@
             </div>
             <div class="mt-2">
                 <label for="level-district">Provincial</label><span> * </span>
-                <select class="form-control" id="level-district" (change)="onChange($event.target.value)"
-                    formControlName=" provinceCode">
+                <select class="form-control" id="level-district" (ngModelChange)="onChange($event)"
+                    formControlName="provinceCode">
                     <option [ngValue]="null">Belong to the province</option>
                     <option [ngValue]="p.code" *ngFor="let p of listProvince">
                         {{ p.name }}
@@ -141,6 +145,29 @@
         <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">
             <i class="fa fa-check mr-1"></i>
             {{ '::Save' | abpLocalization }}
+        </button>
+    </ng-template>
+</abp-modal>
+<abp-modal [(visible)]="isModalUploadFileOpen">
+    <ng-template #abpHeader>
+        <h3>{{ '::UploadFile' | abpLocalization }}</h3>
+    </ng-template>
+    <ng-template #abpBody>
+        <div>
+            <p>Hãy chắc chắn rằng File của bạn đã tuân theo định dạng sau <a target="_self"
+                    href="../../../assets/files/ward_temp.xlsx" download="ward_temp.xlsx">File Upload</a></p>
+        </div>
+        <div class="col-md-6">
+            <input type="file" (change)="onFileChange($event.target.files)" accept=".xlsx" class="form-control" />
+        </div>
+    </ng-template>
+    <ng-template #abpFooter>
+        <button type="button" class="btn btn-secondary" abpClose>
+            {{ '::Close' | abpLocalization }}
+        </button>
+        <button class="btn btn-primary" (click)="uploadFile()" [disabled]="!selectedFile">
+            <i class="fa fa-check mr-1"></i>
+            Upload Excel File
         </button>
     </ng-template>
 </abp-modal>
