@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Ord.HospitalManagement.EntityFrameworkCore;
+using Ord.HospitalManagement.IServices;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,7 +14,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Ord.HospitalManagement.DapperRepo
 {
-    public class DapperRepo : DapperRepository<HospitalManagementDbContext>, ITransientDependency
+    public class DapperRepo : DapperRepository<HospitalManagementDbContext>, IDapperRepo, ITransientDependency
     {
         public DapperRepo(IDbContextProvider<HospitalManagementDbContext> dbContextProvider) : base(dbContextProvider)
         {

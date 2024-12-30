@@ -7,6 +7,7 @@ using Ord.HospitalManagement.DTOs.Address;
 using Ord.HospitalManagement.DTOs.Address.ModelFilter;
 using Ord.HospitalManagement.Entities.Address;
 using Ord.HospitalManagement.Enums;
+using Ord.HospitalManagement.IServices;
 using Ord.HospitalManagement.IServices.Address;
 using System;
 using System.Collections.Generic;
@@ -26,10 +27,12 @@ namespace Ord.HospitalManagement.Services
                     IProvinceAppService
     {
         private readonly IGenerateCode _generateCode;
-        private readonly DapperRepo.DapperRepo _dapper;
+        //private readonly DapperRepo.DapperRepo _dapper;
+        private readonly IDapperRepo _dapper;
+
         private readonly ICurrentUser _currentUser;
 
-        public ProvinceAppService(IRepository<Province, int> repository, DapperRepo.DapperRepo dapper, IGenerateCode generateCode, ICurrentUser currentUser) : base(repository)
+        public ProvinceAppService(IRepository<Province, int> repository, IDapperRepo dapper, IGenerateCode generateCode, ICurrentUser currentUser) : base(repository)
         {
             _generateCode = generateCode;
             _dapper = dapper;
@@ -38,22 +41,6 @@ namespace Ord.HospitalManagement.Services
 
         public async override Task<PagedResultDto<ProvinceDto>> GetListAsync(CustomePagedAndSortedResultRequestProvinceDto input)
         {
-            //var a = _currentUser.Id;
-            //var queryable = await Repository.GetQueryableAsync();
-            //var provinces = await AsyncExecuter.ToListAsync(
-            //    queryable
-            //        .WhereIf(!input.FilterName.IsNullOrEmpty(), x => x.Name.Contains(input.FilterName)) // apply filtering
-            //        .Skip(input.SkipCount)
-            //        .Take(input.MaxResultCount)
-            //);
-            ////Convert to DTOs
-            //var provinceDtos = ObjectMapper.Map<List<Province>, List<ProvinceDto>>(provinces);
-            //var totalCount = await Repository.GetCountAsync();
-
-            //return new PagedResultDto<ProvinceDto>(
-            //    totalCount,
-            //    provinceDtos
-            //);
             var countQuery = @"SELECT COUNT(*) FROM Province Where 1=1";
             var baseQuery = @"SELECT Id, Code, Name, LevelProvince
                             FROM Province Where 1=1";
