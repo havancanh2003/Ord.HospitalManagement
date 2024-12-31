@@ -1,4 +1,6 @@
-﻿using IronXL;
+﻿using AutoMapper;
+using AutoMapper.Internal.Mappers;
+using IronXL;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using Ord.HospitalManagement.DataResult;
@@ -29,14 +31,13 @@ namespace Ord.HospitalManagement.Services
         private readonly IGenerateCode _generateCode;
         //private readonly DapperRepo.DapperRepo _dapper;
         private readonly IDapperRepo _dapper;
+        private readonly IMapper _mapper;
 
-        private readonly ICurrentUser _currentUser;
-
-        public ProvinceAppService(IRepository<Province, int> repository, IDapperRepo dapper, IGenerateCode generateCode, ICurrentUser currentUser) : base(repository)
+        public ProvinceAppService(IRepository<Province, int> repository, IDapperRepo dapper, IMapper mapper, IGenerateCode generateCode) : base(repository)
         {
             _generateCode = generateCode;
             _dapper = dapper;
-            _currentUser = currentUser;
+            _mapper = mapper;
         }
 
         public async override Task<PagedResultDto<ProvinceDto>> GetListAsync(CustomePagedAndSortedResultRequestProvinceDto input)
@@ -69,11 +70,14 @@ namespace Ord.HospitalManagement.Services
         {
             try
             {
-                var province = ObjectMapper.Map<CreateUpdateProvinceDto, Province>(input);
+                //var province = ObjectMapper.Map<CreateUpdateProvinceDto, Province>(input);
+                var province = _mapper.Map<Province>(input);
                 province.Code = _generateCode.AutoGenerateCode(PrefixGencode.PrefixGencode.PROV);
 
                 await Repository.InsertAsync(province);
-                return ObjectMapper.Map<Province, ProvinceDto>(province);
+
+                return  _mapper.Map<ProvinceDto>(province);;
+                //return ObjectMapper.Map<Province, ProvinceDto>(province);
             }
             catch (Exception ex) {
                 throw new Exception(ex.Message);
@@ -84,10 +88,35 @@ namespace Ord.HospitalManagement.Services
             try
             {
                 var existingProvince = await Repository.GetAsync(id);
-                ObjectMapper.Map(input, existingProvince);
+                if (existingProvince == null) {
+                    throw new Exception("Xảy ra lỗi");
+                }
+                _mapper.Map(input, existingProvince);
+                //ObjectMapper.Map(input, existingProvince);
                 await Repository.UpdateAsync(existingProvince);
 
-                return ObjectMapper.Map<Province, ProvinceDto>(existingProvince);
+                //return ObjectMapper.Map<Province, ProvinceDto>(existingProvince);
+                return _mapper.Map<Province, ProvinceDto>(existingProvince);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public override async Task DeleteAsync(int id)
+        {
+            if (id == 0)
+            {
+                throw new ArgumentException("ID không hợp lệ");
+            }
+            try
+            {
+                var existingProvince = await Repository.GetAsync(id);
+                if (existingProvince == null)
+                {
+                   throw new ArgumentException("Xảy ra lỗi");
+                }
+                await Repository.DeleteAsync(existingProvince);
             }
             catch (Exception ex)
             {
@@ -97,10 +126,11 @@ namespace Ord.HospitalManagement.Services
 
         public async Task<ProvinceDto?> GetProvinceByCode(string code)
         {
-            var get = await Repository.FirstOrDefaultAsync(p => p.Code == code);
+            var get = await Repository.FindAsync(p => p.Code == code);
             if (get == null)
                 return null;
-            return ObjectMapper.Map<Province, ProvinceDto>(get);
+            //return ObjectMapper.Map<Province, ProvinceDto>(get);
+            return _mapper.Map<Province, ProvinceDto>(get);
         }
         public async Task<DataResult<ProvinceDto>> ImportExcel(IFormFile formFile)
         {

@@ -30,97 +30,145 @@ using AutoFixture.AutoMoq;
 using Volo.Abp.ObjectMapping;
 using Ord.HospitalManagement.IServices;
 using System.Threading;
+using Autofac.Core;
+using Volo.Abp;
+using System.Linq.Expressions;
 
 namespace Ord.HospitalManagement.UnitTest
 {
     public class Province_UnitTests
     {
-        private readonly Mock<IRepository<Province, int>> _repositoryMock;
-        private readonly Mock<IDapperRepo> _dapperMock;
-        private readonly Mock<IGenerateCode> _generateCodeMock;
-        private readonly Mock<ICurrentUser> _currentUserMock;
-        private readonly ProvinceAppService _provinceAppService;
         private readonly IFixture _fixture;
-        //private readonly IProvinceAppService _provinceAppService;
+        private readonly Mock<IRepository<Province, int>> _repositoryMock;
+        private readonly Mock<IDapperRepo> _dapperRepoMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<IGenerateCode> _generateCodeMock;
+        private readonly ProvinceAppService _provinceAppService;
+
         public Province_UnitTests()
         {
-            _repositoryMock = new Mock<IRepository<Province, int>>();
-            _dapperMock = new Mock<IDapperRepo>();
-            _generateCodeMock = new Mock<IGenerateCode>();
-            _currentUserMock = new Mock<ICurrentUser>();
             _fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _repositoryMock = _fixture.Freeze<Mock<IRepository<Province, int>>>();
+            _dapperRepoMock = _fixture.Freeze<Mock<IDapperRepo>>();
+            _mapperMock = _fixture.Freeze<Mock<IMapper>>();
+            _generateCodeMock = _fixture.Freeze<Mock<IGenerateCode>>();
 
             _provinceAppService = new ProvinceAppService(
                 _repositoryMock.Object,
-                _dapperMock.Object,
-                _generateCodeMock.Object,
-                _currentUserMock.Object
+                _dapperRepoMock.Object,
+                _mapperMock.Object,
+                _generateCodeMock.Object
             );
         }
         [Fact]
-        public async Task CreateAsync_ShouldReturnCreatedProvinceDto()
+        public async Task CreateAsync_Should_Create_Province()
         {
             // Arrange
-            var createDto = _fixture.Create<CreateUpdateProvinceDto>();
+            var input = _fixture.Create<CreateUpdateProvinceDto>();
+            var mappedProvince = _fixture.Create<Province>();
             var generatedCode = "PROV_1234";
-            var province = new Province { Code = generatedCode, Name = createDto.Name, LevelProvince = createDto.LevelProvince };
+            mappedProvince.Code = generatedCode;
+            var mappedDto = _fixture.Create<ProvinceDto>();
 
-            _generateCodeMock.Setup(g => g.AutoGenerateCode(It.IsAny<string>())).Returns(generatedCode);
-            _repositoryMock
-                    .Setup(r => r.InsertAsync(It.IsAny<Province>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(province);
+            _mapperMock.Setup(m => m.Map<Province>(input)).Returns(mappedProvince);
+            _mapperMock.Setup(m => m.Map<ProvinceDto>(mappedProvince)).Returns(mappedDto);
 
             // Act
-            var result = await _provinceAppService.CreateAsync(createDto);
+            var result = await _provinceAppService.CreateAsync(input);
+
+            // Assert
+            _repositoryMock.Verify(r => r.InsertAsync(It.Is<Province>(p => p == mappedProvince), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Once);
+            Assert.Equal(mappedDto, result);
+            Assert.Equal(generatedCode, result.Code);
+        }
+        [Fact]
+        public async Task GetListAsync_Should_Return_Filtered_Provinces()
+        {
+            // Arrange
+            var input = new CustomePagedAndSortedResultRequestProvinceDto
+            {
+                FilterName = "Tỉnh",
+                SkipCount = 0,
+                MaxResultCount = 10
+            };
+
+            var provinceDtos = _fixture.CreateMany<ProvinceDto>(5).ToList();
+            var total = provinceDtos.Count;
+            var queryResult = (total: total, lists: provinceDtos);
+
+            _dapperRepoMock
+                .Setup(d => d.QueryMultiGetAsync<ProvinceDto>(
+                    It.IsAny<string>(),
+                    It.IsAny<object>()))
+                .ReturnsAsync(queryResult);
+
+            // Act
+            var result = await _provinceAppService.GetListAsync(input);
+
+            // Assert
+            Assert.Equal(total, result.TotalCount);
+            Assert.Equal(provinceDtos, result.Items);
+        }
+
+        [Fact]
+        public async Task GetProvinceByCode_ShouldReturnProvinceDto_WhenProvinceExists()
+        {
+            // Arrange
+            var code = "123";
+            var province = new Province { Code = code };
+            var provinceDto = new ProvinceDto { Code = code };
+
+            _repositoryMock.Setup(r => r.FindAsync(It.IsAny<Expression<Func<Province, bool>>>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(province);
+
+            _mapperMock.Setup(m => m.Map<Province, ProvinceDto>(province))
+                       .Returns(provinceDto);
+
+            // Act
+            var result = await _provinceAppService.GetProvinceByCode(code);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(generatedCode, result.Code);  // Kiểm tra giá trị mã province
-            Assert.Equal(province.Name, result.Name);  // Kiểm tra tên province
-            Assert.Equal(province.LevelProvince, result.LevelProvince);  // Kiểm tra level province
-
-            _repositoryMock.Verify(r => r.InsertAsync(It.IsAny<Province>(), true, default), Times.Once);
-        }
-
-
-        [Fact]
-        public async Task Should_Get_All_Issues()
-        {
-            //Act
-            var all = await _provinceAppService.GetListAsync(new DTOs.Address.ModelFilter.CustomePagedAndSortedResultRequestProvinceDto());
-            //Assert
-            all.TotalCount.ShouldBeGreaterThan(0);
-        }
-
-        public async Task GetProvinceByCodeAsync_ShouldThrowArgumentNullException_WhenProvinceDoesNotExist()
-        {
-            //
-            var provinceCode = "PROV_8429";
-            _repositoryMock.Setup(r => r.FirstOrDefaultAsync(p => p.Code.Equals(provinceCode),default))
-                .ReturnsAsync((Province)null);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await _provinceAppService.GetProvinceByCode(provinceCode));
-            exception.Message.ShouldBe("Không tồn tại thông tin địa chỉ trong hệ thống");
+            Assert.Equal(code, result.Code);
         }
         [Fact]
-        public async Task UpdateAsync_ShouldThrowException_WhenRepositoryFails()
+        public async Task UpdateAsync_Should_ThrowException_When_ProvinceDoesNotExist()
         {
             // Arrange
-            var provinceId = 1;
-            var inputDto = _fixture.Create<CreateUpdateProvinceDto>();
+            var nonExistentId = 99; // ID không tồn tại
+            var input = new CreateUpdateProvinceDto
+            {
+                // Điền các giá trị phù hợp cho DTO
+                Name = "Updated Province",
+                LevelProvince = LevelProvince.Province,
+            };
 
             _repositoryMock
-                .Setup(r => r.GetAsync(provinceId,false,default))
-                .ThrowsAsync(new Exception("Xảy ra lỗi"));
+                .Setup(repo => repo.GetAsync(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(default(Province)); // Giả lập không tìm thấy Province
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(async () =>
-                await _provinceAppService.UpdateAsync(provinceId, inputDto));
+                await _provinceAppService.UpdateAsync(nonExistentId, input));
 
-            exception.Message.ShouldBe("Xảy ra lỗi");
+            Assert.Equal("Xảy ra lỗi", exception.Message);
+
+            // Đảm bảo phương thức UpdateAsync trên Repository không được gọi
+            _repositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Province>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
+
+        [Fact]
+        public async Task DeleteAsync_Should_ThrowArgumentException_When_IdIsZero()
+        {
+            // Arrange
+            var provinceId = 0;
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _provinceAppService.DeleteAsync(provinceId));
+
+            exception.Message.ShouldBe("ID không hợp lệ");
+        }
     }
 }
