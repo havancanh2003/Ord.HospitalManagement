@@ -1,0 +1,232 @@
+{
+	"info": {
+		"_postman_id": "2a3fd56b-65b9-4444-a193-3764e6c76256",
+		"name": "UnitTest_HaVanCanh",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40083896"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Lưu response JSON\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Kiểm tra mã trạng thái trả về là 200\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Kiểm tra thời gian phản hồi trong giới hạn chấp nhận được (dưới 1 giây)\r",
+									"pm.test(\"Response time is within an acceptable range\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000); // 1000 ms\r",
+									"});\r",
+									"\r",
+									"// Kiểm tra response có trường accessToken và thoiGianHieuLuc\r",
+									"pm.test(\"Response contains accessToken and thoiGianHieuLuc\", function () {\r",
+									"    pm.expect(response).to.have.property(\"accessToken\");\r",
+									"    pm.expect(response).to.have.property(\"thoiGianHieuLuc\");\r",
+									"});\r",
+									"\r",
+									"// Gán giá trị accessToken vào biến môi trường Postman\r",
+									"pm.environment.set(\"accessToken\", response.accessToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "tenDangNhap",
+									"value": "02839",
+									"type": "text"
+								},
+								{
+									"key": "matKhau",
+									"value": "T3JlbmRhQDEyMw==",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{_BASEURL}}/api/lien-thong/tai-khoan/dang-nhap",
+							"host": [
+								"{{_BASEURL}}"
+							],
+							"path": [
+								"api",
+								"lien-thong",
+								"tai-khoan",
+								"dang-nhap"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TNKT",
+			"item": [
+				{
+					"name": "Tiep_Nhan_Kham_Thai",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Lưu response JSON\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Kiểm tra mã trạng thái trả về là 200\r",
+									"pm.test(\"Response status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Kiểm tra thời gian phản hồi trong giới hạn chấp nhận được (dưới 1 giây)\r",
+									"pm.test(\"Response time is within an acceptable range\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000); // 1000 ms\r",
+									"});\r",
+									"\r",
+									"// Kiểm tra response có trường maGiaoDich\r",
+									"pm.test(\"Response contains maGiaoDich\", function () {\r",
+									"    pm.expect(response).to.have.property(\"maGiaoDich\");\r",
+									"});\r",
+									"\r",
+									"// Gán giá trị maGiaoDich vào biến môi trường\r",
+									"pm.environment.set(\"maGiaoDich\", response.maGiaoDich);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"HO_SO\": {\r\n        \"THONG_TIN_HANH_CHINH\": {\r\n            \"HO_TEN\": \"Nguyen Thị B\",\r\n            \"NGAY_SINH\": \"199904200000\",\r\n            \"GIOI_TINH\": 2,\r\n            \"SO_CCCD\": \"010019004240\",\r\n            \"MA_THE_BHYT\": \"\",\r\n            \"DIA_CHI\": \"Số 1, Phường Giảng Võ, Quận Ba Đình, Thành phố Hà Nội\",\r\n            \"MATINH_CU_TRU\": \"01\",\r\n            \"MAHUYEN_CU_TRU\": \"001\",\r\n            \"MAXA_CU_TRU\": \"00031\",\r\n            \"MA_NGHE_NGHIEP\": \"00000\",\r\n            \"MA_DAN_TOC\": \"01\"\r\n        },\r\n        \"THONG_TIN_KHAM_CHUA_BENH\": {\r\n            \"LUOT_KHAM\": {\r\n                \"MA_LK\": \"2022102\",\r\n                \"MA_CSKCB\": \"01212\",\r\n                \"NGAY_KHAM\": \"202211300828\"\r\n            },\r\n            \"KHAM_THAI\": {\r\n                \"TIEN_SU_NOI_KHOA\": \"1;2\",\r\n                \"NGAY_DAU_KY_KINH_CUOI\": \"20220830\",\r\n                \"TUOI_THAI\": 12,\r\n                \"NGAY_DU_KIEN_SINH\": \"20220524\",\r\n                \"LAN_CO_THAI\": 1,\r\n                \"CAN_NANG\": \"51.00\",\r\n                \"CHIEU_CAO\": \"160\",\r\n                \"HA_TAM_THU\": \"60\",\r\n                \"HA_TAM_TRUONG\": \"120\",\r\n                \"CAO_TC\": \"11\",\r\n                \"VONG_BUNG\": \"106\",\r\n                \"KHUNG_CHAU\": \"1\",\r\n                \"THIEU_MAU\": 2,\r\n                \"PROTEIN_NIEU\": 0,\r\n                \"XN_HIV\": 1,\r\n                \"XN_VGB\": 0,\r\n                \"XN_GIANG_MAI\": 0,\r\n                \"XN_DUONG_HUYET\": 0,\r\n                \"SANG_LOC_TRUOC_SINH\": 1,\r\n                \"TIM_THAI\": 1,\r\n                \"NGOI_THAI\": 0,\r\n                \"TIEN_LUONG_DE\": 0,\r\n                \"NGUOI_KHAM\": 1\r\n            }\r\n        }\r\n    }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{_BASEURL}}/api/lien-thong/tiep-nhan",
+							"host": [
+								"{{_BASEURL}}"
+							],
+							"path": [
+								"api",
+								"lien-thong",
+								"tiep-nhan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TRACUU",
+			"item": [
+				{
+					"name": "Tra_Cuu",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "maGiaoDich",
+									"value": "{{maGiaoDich}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{_BASEURL}}/api/lien-thong/ho-so",
+							"host": [
+								"{{_BASEURL}}"
+							],
+							"path": [
+								"api",
+								"lien-thong",
+								"ho-so"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
