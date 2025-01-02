@@ -1,37 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Moq;
+﻿using Moq;
 using Ord.HospitalManagement.DomainServices;
 using Ord.HospitalManagement.DTOs.Address.ModelFilter;
 using Ord.HospitalManagement.DTOs.Address;
-using Ord.HospitalManagement.Entities;
 using Ord.HospitalManagement.Entities.Address;
 using Ord.HospitalManagement.Enums;
-using Ord.HospitalManagement.IServices.Address;
-using Ord.HospitalManagement.IServices.Hospital;
 using Ord.HospitalManagement.Services;
-using Ord.HospitalManagement.Services.Common;
-using Ord.HospitalManagement.Services.ManegeHospital;
 using Shouldly;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Modularity;
-using Volo.Abp.Users;
 using Xunit;
-using static Ord.HospitalManagement.Permissions.HospitalManagementPermissions;
-using NSubstitute;
 using AutoMapper;
-using AutoMapper.Internal.Mappers;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Volo.Abp.ObjectMapping;
 using Ord.HospitalManagement.IServices;
 using System.Threading;
-using Autofac.Core;
-using Volo.Abp;
 using System.Linq.Expressions;
 
 namespace Ord.HospitalManagement.UnitTest
@@ -138,7 +122,6 @@ namespace Ord.HospitalManagement.UnitTest
             var nonExistentId = 99; // ID không tồn tại
             var input = new CreateUpdateProvinceDto
             {
-                // Điền các giá trị phù hợp cho DTO
                 Name = "Updated Province",
                 LevelProvince = LevelProvince.Province,
             };
@@ -165,7 +148,7 @@ namespace Ord.HospitalManagement.UnitTest
             var provinceId = 0;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+            var exception = await Assert.ThrowsAsync<Exception>(async () =>
                 await _provinceAppService.DeleteAsync(provinceId));
 
             exception.Message.ShouldBe("ID không hợp lệ");

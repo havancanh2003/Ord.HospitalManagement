@@ -105,12 +105,12 @@ namespace Ord.HospitalManagement.Services
         }
         public override async Task DeleteAsync(int id)
         {
-            if (id == 0)
-            {
-                throw new ArgumentException("ID không hợp lệ");
-            }
             try
             {
+                if (id == 0)
+                {
+                    throw new ArgumentException("ID không hợp lệ");
+                }
                 var existingProvince = await Repository.GetAsync(id);
                 if (existingProvince == null)
                 {
